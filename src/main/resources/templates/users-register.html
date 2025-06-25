@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Регистрация | Електронен дневник</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body {
+            background: #e8f5e9;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .register-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 128, 0, 0.15);
+            width: 100%;
+            max-width: 500px;
+        }
+        .register-container h2 {
+            text-align: center;
+            color: #2e7d32;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #388e3c;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #a5d6a7;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #66bb6a;
+            outline: none;
+        }
+        .register-btn {
+            background-color: #43a047;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        .register-btn:hover {
+            background-color: #388e3c;
+        }
+        .home-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #2e7d32;
+            text-decoration: none;
+        }
+        .home-link:hover {
+            text-decoration: underline;
+        }
+        .error-message, .field-error {
+            color: #c62828;
+            margin-top: 0.25rem;
+            font-size: 0.9rem;
+        }
+        .bg-danger {
+            background-color: #c62828;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="register-container">
+    <h2>Регистрация</h2>
+
+    <form th:action="@{/users/register}" method="post" th:object="${userDTO}">
+
+        <p th:if="${isUserOrEmailOccupied}" class="bg-danger">
+            Потребителското име или имейлът вече съществуват.
+        </p>
+
+        <div class="form-group">
+            <label for="username">Потребителско име</label>
+            <input type="text" id="username" th:field="*{username}"  />
+            <small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="field-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Имейл</label>
+            <input type="email" id="email" th:field="*{email}"  />
+            <small th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="field-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="firstName">Име</label>
+            <input type="text" id="firstName" th:field="*{firstName}"  />
+            <small th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="field-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="lastName">Фамилия</label>
+            <input type="text" id="lastName" th:field="*{lastName}"  />
+            <small th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="field-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Парола</label>
+            <input type="password" id="password" th:field="*{password}"  />
+            <small th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="field-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Потвърди паролата</label>
+            <input type="password" id="confirmPassword" th:field="*{confirmPassword}"  />
+            <small th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="field-error"></small>
+        </div>
+
+        <button type="submit" class="register-btn">Регистрирай се</button>
+
+        <div th:if="${param.error}" class="error-message">
+            Възникна грешка при регистрацията. Опитайте отново.
+        </div>
+    </form>
+
+    <a th:href="@{/}" class="home-link">⬅ Обратно към началната страница</a>
+</div>
+
+</body>
+</html>
