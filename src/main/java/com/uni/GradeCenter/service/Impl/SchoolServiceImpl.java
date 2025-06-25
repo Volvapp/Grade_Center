@@ -83,6 +83,11 @@ public class SchoolServiceImpl implements SchoolService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void saveSchool(School school) {
+        schoolRepository.save(school);
+    }
+
     private SchoolDTO convertToDTO(School school) {
         SchoolDTO dto = modelMapper.map(school, SchoolDTO.class);
 

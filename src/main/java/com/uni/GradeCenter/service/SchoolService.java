@@ -19,4 +19,6 @@ public interface SchoolService {
     void initializeSchools();
 
     List<SchoolDTO> getAllSchoolDTOs();
+
+    void saveSchool(School school);
 }
