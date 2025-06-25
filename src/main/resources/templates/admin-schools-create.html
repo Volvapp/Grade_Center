@@ -5,14 +5,19 @@
     <title>Създаване на училище | Електронен дневник</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             background: #e8f5e9;
             font-family: 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 1rem;
         }
 
         .form-container {
@@ -77,6 +82,7 @@
             margin-top: 1.5rem;
             color: #2e7d32;
             text-decoration: none;
+            font-size: 0.95rem;
         }
 
         .home-link:hover {
@@ -97,6 +103,27 @@
             margin-bottom: 1rem;
             text-align: center;
             font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 1.2rem;
+            }
+
+            .submit-btn {
+                font-size: 0.95rem;
+                padding: 0.65rem;
+            }
+
+            input[type="text"],
+            select {
+                font-size: 0.95rem;
+                padding: 0.6rem;
+            }
+
+            .form-container h2 {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
@@ -121,16 +148,12 @@
 
         <div class="form-group">
             <label for="directorId">Директор</label>
-            <select id="directorId" th:field="*{director}">
+            <select id="directorId" th:field="*{director}" required>
                 <option value="">-- Изберете директор --</option>
-                <option value="1">Иван Петров</option>
-                <option value="2">Мария Иванова</option>
-                <!-- При реална интеграция:
                 <option th:each="director : ${directors}"
                         th:value="${director.id}"
                         th:text="${director.firstName + ' ' + director.lastName}">
                 </option>
-                -->
             </select>
             <small th:if="${#fields.hasErrors('director')}" th:errors="*{director}" class="field-error"></small>
         </div>

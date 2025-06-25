@@ -94,4 +94,9 @@ public class StudentServiceImpl implements StudentService {
         parentRepository.save(parent);
         studentRepository.save(savedStudent); // обновен със setParent
     }
+
+    @Override
+    public List<Student> getStudentsByIds(List<Long> studentIds) {
+        return this.studentRepository.findAllById(studentIds);
+    }
 }

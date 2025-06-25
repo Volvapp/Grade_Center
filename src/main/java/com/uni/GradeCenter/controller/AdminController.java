@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -87,8 +90,16 @@ public class AdminController {
         if (!model.containsAttribute("createSchoolBindingDTO")) {
             model.addAttribute("createSchoolBindingDTO", new CreateSchoolBindingDTO());
         }
+        List<User> allDirectors = userService.getUsersByRole(Role.DIRECTOR);
+        Set<Long> assignedDirectorIds = schoolService.getAllSchools().stream()
+                .map(school -> school.getDirector().getId())
+                .collect(Collectors.toSet());
 
-        model.addAttribute("directors", userService.getUsersByRole(Role.DIRECTOR));
+        List<User> unassignedDirectors = allDirectors.stream()
+                .filter(director -> !assignedDirectorIds.contains(director.getId()))
+                .collect(Collectors.toList());
+
+        model.addAttribute("directors", unassignedDirectors);
 
         return "admin-schools-create";
     }

@@ -77,4 +77,9 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         classroomRepository.saveAll(List.of(class6A, class7B, class8C));
     }
+
+    @Override
+    public List<Classroom> getClassroomsByIds(List<Long> classroomIds) {
+        return this.classroomRepository.findAllById(classroomIds);
+    }
 }

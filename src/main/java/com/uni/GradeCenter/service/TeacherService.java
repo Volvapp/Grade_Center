@@ -2,6 +2,8 @@ package com.uni.GradeCenter.service;
 
 import com.uni.GradeCenter.model.Teacher;
 
+import java.util.List;
+
 public interface TeacherService {
     Teacher createTeacher(Teacher teacher);
 
@@ -12,4 +14,6 @@ public interface TeacherService {
     void deleteTeacherById(Long id);
 
     void initializeTeachers();
+
+    List<Teacher> getTeachersByIds(List<Long> teacherIds);
 }

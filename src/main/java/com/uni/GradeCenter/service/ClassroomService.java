@@ -16,4 +16,6 @@ public interface ClassroomService {
     List<Classroom> getAllClassrooms();
 
     void initializeClassrooms();
+
+    List<Classroom> getClassroomsByIds(List<Long> classroomIds);
 }

@@ -75,4 +75,9 @@ public class TeacherServiceImpl implements TeacherService {
 
         teacherRepository.save(teacher);
     }
+
+    @Override
+    public List<Teacher> getTeachersByIds(List<Long> teacherIds) {
+        return this.teacherRepository.findAllById(teacherIds);
+    }
 }

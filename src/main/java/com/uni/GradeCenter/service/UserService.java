@@ -1,5 +1,6 @@
 package com.uni.GradeCenter.service;
 
+import com.uni.GradeCenter.model.Teacher;
 import com.uni.GradeCenter.model.User;
 import com.uni.GradeCenter.model.dto.UserDTO;
 import com.uni.GradeCenter.model.enums.Role;
@@ -23,5 +24,6 @@ public interface UserService {
 
     void updateUserFromDTO(Long id, UserDTO userDTO);
 
-    User getUsersByRole(Role role);
+    List<User> getUsersByRole(Role role);
+
 }
