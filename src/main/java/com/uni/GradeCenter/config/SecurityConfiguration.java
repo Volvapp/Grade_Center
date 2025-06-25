@@ -1,22 +1,26 @@
 package com.uni.GradeCenter.config;
 
-import com.uni.GradeCenter.service.CustomUserDetailsService;
+import com.uni.GradeCenter.service.Impl.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfiguration {
 
     private final CustomUserDetailsService userDetailsService;
+    private final AuthenticationFailureHandler authenticationFailureHandler;
 
-    public SecurityConfiguration(CustomUserDetailsService userDetailsService) {
+    public SecurityConfiguration(CustomUserDetailsService userDetailsService, AuthenticationFailureHandler authenticationFailureHandler) {
         this.userDetailsService = userDetailsService;
+        this.authenticationFailureHandler = authenticationFailureHandler;
     }
 
     @Bean
@@ -29,6 +33,7 @@ public class SecurityConfiguration {
                 .formLogin(form -> form
                         .loginPage("/users/login")
                         .loginProcessingUrl("/authenticateTheUser")
+                        .failureHandler(authenticationFailureHandler)
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
@@ -48,4 +53,5 @@ public class SecurityConfiguration {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
