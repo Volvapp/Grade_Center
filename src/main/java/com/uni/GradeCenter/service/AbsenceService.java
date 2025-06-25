@@ -15,4 +15,6 @@ public interface AbsenceService {
     void deleteAbsenceById(Long id);
 
     List<Absence> getAllAbsences();
+
+    void initializeAbsences();
 }

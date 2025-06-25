@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "teachers")
-public class Teacher extends BaseEntity{
+public class Teacher extends BaseEntity {
 
     @OneToOne
     private User user;
@@ -15,7 +15,7 @@ public class Teacher extends BaseEntity{
     @ManyToOne
     private School school;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Subject> qualifiedSubjects;
 
     @OneToMany(mappedBy = "teacher")

@@ -1,19 +1,25 @@
 package com.uni.GradeCenter.service.Impl;
 
+import com.uni.GradeCenter.model.School;
 import com.uni.GradeCenter.model.Subject;
+import com.uni.GradeCenter.repository.SchoolRepository;
 import com.uni.GradeCenter.repository.SubjectRepository;
 import com.uni.GradeCenter.service.SubjectService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
 
     private final SubjectRepository subjectRepository;
 
-    public SubjectServiceImpl(SubjectRepository subjectRepository) {
+    private final SchoolRepository schoolRepository;
+
+    public SubjectServiceImpl(SubjectRepository subjectRepository, SchoolRepository schoolRepository) {
         this.subjectRepository = subjectRepository;
+        this.schoolRepository = schoolRepository;
     }
 
     @Override
@@ -42,5 +48,25 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public List<Subject> getAllSubjects() {
         return subjectRepository.findAll();
+    }
+
+    @Override
+    public void initializeSubjects() {
+        if (subjectRepository.count() > 0) return;
+
+        Optional<School> schoolOpt = schoolRepository.findAll().stream().findFirst();
+
+        if (schoolOpt.isEmpty()) {
+            throw new IllegalStateException("No schools found! Cannot create subjects without a school.");
+        }
+
+        School school = schoolOpt.get();
+
+        Subject math = new Subject("Mathematics", school);
+        Subject history = new Subject("History", school);
+        Subject biology = new Subject("Biology", school);
+        Subject english = new Subject("English", school);
+
+        subjectRepository.saveAll(List.of(math, history, biology, english));
     }
 }

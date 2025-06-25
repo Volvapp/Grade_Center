@@ -14,4 +14,6 @@ public interface SubjectService {
     void deleteSubjectById(Long id);
 
     List<Subject> getAllSubjects();
+
+    void initializeSubjects();
 }

@@ -10,4 +10,6 @@ public interface TeacherService {
     Teacher updateTeacher(Teacher teacher);
 
     void deleteTeacherById(Long id);
+
+    void initializeTeachers();
 }

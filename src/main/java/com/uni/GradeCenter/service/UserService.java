@@ -12,4 +12,6 @@ public interface UserService {
     void deleteUserById(Long id);
 
     boolean usernameOrEmailExists(String username, String email);
+
+    void initializeUsers();
 }

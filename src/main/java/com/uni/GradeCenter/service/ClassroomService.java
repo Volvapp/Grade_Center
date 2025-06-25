@@ -14,4 +14,6 @@ public interface ClassroomService {
     void deleteClassroomById(Long id);
 
     List<Classroom> getAllClassrooms();
+
+    void initializeClassrooms();
 }
