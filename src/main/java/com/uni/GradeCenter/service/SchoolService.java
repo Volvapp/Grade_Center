@@ -1,6 +1,7 @@
 package com.uni.GradeCenter.service;
 
 import com.uni.GradeCenter.model.School;
+import com.uni.GradeCenter.model.dto.SchoolDTO;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface SchoolService {
     List<School> getAllSchools();
 
     void initializeSchools();
+
+    List<SchoolDTO> getAllSchoolDTOs();
 }

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Потребители | Админ панел</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        /* Reset и базови стилове */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #d0f0c0, #a3d18a);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 1.5rem;
+            color: #1b3e1b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            margin-bottom: 1rem;
+            font-weight: 700;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        /* Кутия за съобщения */
+        #success-message {
+            background-color: #388e3c;
+            color: #e6f4ea;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            max-width: 1000px;
+            box-shadow: 0 4px 15px rgba(56, 142, 60, 0.4);
+            opacity: 1;
+            transition: opacity 1s ease;
+            text-align: center;
+            user-select: none;
+        }
+
+        /* Бутон Начало */
+        .btn-home {
+            background-color: #4caf50;
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1.1rem;
+            box-shadow: 0 3px 8px rgba(76, 175, 80, 0.5);
+            margin-bottom: 1.5rem;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            display: inline-block;
+        }
+        .btn-home:hover,
+        .btn-home:focus {
+            background-color: #2e7d32;
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.6);
+            outline: none;
+        }
+
+        /* Таблица */
+        table {
+            border-collapse: separate;
+            border-spacing: 0 12px;
+            width: 100%;
+            max-width: 1000px;
+            background-color: #f4fff2;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+            overflow: hidden;
+        }
+        thead tr {
+            background-color: #4caf50;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        thead th {
+            padding: 14px 20px;
+            text-align: left;
+        }
+        tbody tr {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: transform 0.15s ease;
+        }
+        tbody tr:hover {
+            transform: translateY(-4px);
+            background-color: #e1f1d6;
+            box-shadow: 0 8px 20px rgba(72, 151, 57, 0.3);
+        }
+        tbody td {
+            padding: 14px 20px;
+            vertical-align: middle;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        /* Форма в таблицата */
+        form {
+            display: contents; /* позволява form да не пречи на tr */
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 1rem;
+            border: 2px solid #a3d18a;
+            border-radius: 6px;
+            background-color: #f9fff9;
+            color: #2e7d32;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-weight: 600;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 8px #4caf50aa;
+        }
+
+        button[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 22px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.7);
+        }
+        button[type="submit"]:hover,
+        button[type="submit"]:focus {
+            background-color: #2e7d32;
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.8);
+            outline: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            body {
+                padding: 1rem;
+            }
+            table, #success-message, .btn-home {
+                max-width: 100%;
+            }
+            thead tr {
+                font-size: 0.95rem;
+            }
+            tbody td {
+                font-size: 0.9rem;
+                padding: 10px 8px;
+            }
+            button[type="submit"] {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+            input[type="text"],
+            input[type="email"],
+            select {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Управление на потребители</h1>
+
+<a href="/" class="btn-home" aria-label="Връщане към началната страница">Начална страница</a>
+
+<div th:if="${successMessage}" id="success-message" role="alert" aria-live="polite">
+    <p th:text="${successMessage}"></p>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Потребителско име</th>
+        <th>Име</th>
+        <th>Фамилия</th>
+        <th>Имейл</th>
+        <th>Роля</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <form th:action="@{'/admin/users/edit/' + ${user.id}}" method="post">
+            <td th:text="${user.username}"></td>
+            <td>
+                <input type="text" name="firstName" th:value="${user.firstName}" required />
+            </td>
+            <td>
+                <input type="text" name="lastName" th:value="${user.lastName}" required />
+            </td>
+            <td>
+                <input type="email" name="email" th:value="${user.email}" />
+            </td>
+            <td>
+                <select name="role" required>
+                    <option th:value="ADMIN" th:text="'Администратор'" th:selected="${user.role.name() == 'ADMIN'}"></option>
+                    <option th:value="DIRECTOR" th:text="'Директор'" th:selected="${user.role.name() == 'DIRECTOR'}"></option>
+                    <option th:value="TEACHER" th:text="'Учител'" th:selected="${user.role.name() == 'TEACHER'}"></option>
+                    <option th:value="PARENT" th:text="'Родител'" th:selected="${user.role.name() == 'PARENT'}"></option>
+                    <option th:value="STUDENT" th:text="'Ученик'" th:selected="${user.role.name() == 'STUDENT'}"></option>
+                </select>
+            </td>
+            <td>
+                <button type="submit" aria-label="Запази промяната">Запази</button>
+            </td>
+        </form>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    // Fade out съобщението плавно след 3 секунди
+    window.addEventListener('DOMContentLoaded', () => {
+        const msg = document.getElementById('success-message');
+        if (msg) {
+            setTimeout(() => {
+                msg.style.transition = 'opacity 1s ease';
+                msg.style.opacity = '0';
+                setTimeout(() => msg.style.display = 'none', 1000);
+            }, 3000);
+        }
+    });
+</script>
+
+</body>
+</html>

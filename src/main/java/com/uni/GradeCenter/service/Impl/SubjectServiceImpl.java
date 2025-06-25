@@ -35,7 +35,6 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public Subject updateSubject(Subject subject) {
         Subject current = subjectRepository.findById(subject.getId()).orElseThrow();
-        // Може да актуализираш полетата, ако има такива
         current.setName(subject.getName());
         return subjectRepository.save(current);
     }

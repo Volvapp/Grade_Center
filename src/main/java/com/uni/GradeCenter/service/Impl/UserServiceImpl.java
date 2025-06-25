@@ -1,6 +1,7 @@
 package com.uni.GradeCenter.service.Impl;
 
 import com.uni.GradeCenter.model.User;
+import com.uni.GradeCenter.model.dto.UserDTO;
 import com.uni.GradeCenter.model.enums.Role;
 import com.uni.GradeCenter.repository.UserRepository;
 import com.uni.GradeCenter.service.UserService;
@@ -40,6 +41,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUserById(Long id) {
         this.userRepository.deleteById(id);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return this.userRepository.findAll();
     }
 
     @Override
@@ -97,5 +103,25 @@ public class UserServiceImpl implements UserService {
         );
 
         userRepository.saveAll(List.of(admin, director, teacher, student, parent));
+    }
+
+    @Override
+    public void updateUserFromDTO(Long id, UserDTO userDTO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+        if (userDTO.getRole() != null) {
+            user.setRole(userDTO.getRole());
+        }
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public User getUsersByRole(Role role) {
+        return this.userRepository.findByRole(role).orElseThrow();
     }
 }
