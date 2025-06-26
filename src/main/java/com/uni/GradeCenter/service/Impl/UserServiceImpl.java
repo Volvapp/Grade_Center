@@ -1,12 +1,19 @@
 package com.uni.GradeCenter.service.Impl;
 
+import com.uni.GradeCenter.model.Parent;
+import com.uni.GradeCenter.model.Student;
+import com.uni.GradeCenter.model.Teacher;
 import com.uni.GradeCenter.model.User;
 import com.uni.GradeCenter.model.dto.UserDTO;
 import com.uni.GradeCenter.model.enums.Role;
 import com.uni.GradeCenter.repository.UserRepository;
+import com.uni.GradeCenter.service.ParentService;
+import com.uni.GradeCenter.service.StudentService;
+import com.uni.GradeCenter.service.TeacherService;
 import com.uni.GradeCenter.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,10 +21,16 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TeacherService teacherService;
+    private final StudentService studentService;
+    private final ParentService parentService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, TeacherService teacherService, StudentService studentService, ParentService parentService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.teacherService = teacherService;
+        this.studentService = studentService;
+        this.parentService = parentService;
     }
 
     @Override
@@ -104,16 +117,57 @@ public class UserServiceImpl implements UserService {
 
         userRepository.saveAll(List.of(admin, director, teacher, student, parent));
     }
-
     @Override
+    @Transactional
     public void updateUserFromDTO(Long id, UserDTO userDTO) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        Role oldRole = user.getRole();
+
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user.setEmail(userDTO.getEmail());
-        if (userDTO.getRole() != null) {
+
+        if (userDTO.getRole() != null && userDTO.getRole() != oldRole) {
+
+            switch (oldRole) {
+                case STUDENT:
+                    Student studentByUserId = studentService.getStudentByUserId(id);
+                    Parent parent = studentByUserId.getParent();
+                    if (parent != null) {
+                        parent.setChild(null);
+                        this.parentService.updateParent(parent);
+                    }
+                    studentService.deleteByUserId(user.getId());
+                    break;
+                case TEACHER:
+                    teacherService.deleteByUserId(user.getId());
+                    break;
+                case PARENT:
+                    //todo shte trqbva da se napravi za vsqka rolq :))))))))))
+                    parentService.deleteByUserId(user.getId());
+                    break;
+            }
+
+            switch (userDTO.getRole()) {
+                case STUDENT:
+                    Student student = new Student();
+                    student.setUser(user);
+                    studentService.createStudent(student);
+                    break;
+                case TEACHER:
+                    Teacher teacher = new Teacher();
+                    teacher.setUser(user);
+                    teacherService.createTeacher(teacher);
+                    break;
+                case PARENT:
+                    Parent parent = new Parent();
+                    parent.setUser(user);
+                    parentService.createParent(parent);
+                    break;
+            }
+
             user.setRole(userDTO.getRole());
         }
 

@@ -80,4 +80,9 @@ public class TeacherServiceImpl implements TeacherService {
     public List<Teacher> getTeachersByIds(List<Long> teacherIds) {
         return this.teacherRepository.findAllById(teacherIds);
     }
+
+    @Override
+    public void deleteByUserId(Long id) {
+        this.teacherRepository.deleteByUserId(id);
+    }
 }

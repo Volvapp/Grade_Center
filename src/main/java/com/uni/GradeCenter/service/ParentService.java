@@ -16,4 +16,6 @@ public interface ParentService {
     List<Parent> getAllParents();
 
     void updateParentInline(Long id, String firstName, String lastName, String email, Long childId);
+
+    void deleteByUserId(Long id);
 }

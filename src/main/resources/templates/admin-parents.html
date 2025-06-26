@@ -5,9 +5,17 @@
     <title>Редакция на родители</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        :root {
+            --main-color: #2e7d32;
+            --accent-color: #d4edda;
+            --light-bg: #f9fef9;
+            --input-bg: #f1f8f1;
+            --font: 'Segoe UI', Tahoma, sans-serif;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #e6f2e6;
+            font-family: var(--font);
+            background: var(--light-bg);
             margin: 0;
             padding: 20px;
             color: #1a3d1a;
@@ -15,7 +23,7 @@
 
         h1 {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .back-button {
@@ -23,7 +31,7 @@
             align-items: center;
             gap: 6px;
             margin-bottom: 20px;
-            color: #2e7d32;
+            color: var(--main-color);
             text-decoration: none;
             font-weight: bold;
         }
@@ -31,67 +39,92 @@
         .back-button svg {
             width: 20px;
             height: 20px;
-            fill: #2e7d32;
+            fill: var(--main-color);
         }
 
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 10px;
+        #success-message {
+            background-color: var(--accent-color);
+            color: #155724;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .parent-card {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        thead {
-            background: #2e7d32;
-            color: white;
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        th, td {
-            padding: 14px;
-            text-align: left;
+        .name-group {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
         }
 
-        tbody tr {
-            background: #f0faf0;
-            transition: background 0.3s;
-        }
-
-        tbody tr:hover {
-            background: #d4edda;
+        .name-group input {
+            flex: 1;
         }
 
         input[type="text"],
         input[type="email"],
         select {
-            width: 100%;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1.5px solid #2e7d32;
-            background: #e9f5e9;
-            font-size: 14px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            border: 1.5px solid var(--main-color);
+            background-color: var(--input-bg);
+            font-size: 15px;
+            transition: all 0.2s ease-in-out;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             border-color: #1b5e20;
             outline: none;
-            background: #d4edda;
+            background: #e1f5e1;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
         }
 
         .btn {
-            background-color: #388e3c;
+            background-color: var(--main-color);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 12px;
+            border-radius: 8px;
             font-weight: 600;
+            font-size: 15px;
             cursor: pointer;
             transition: background 0.3s;
+            width: fit-content;
+            align-self: flex-start;
         }
 
         .btn:hover {
-            background-color: #2e7d32;
+            background-color: #256d27;
+        }
+
+        @media (max-width: 768px) {
+            .name-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -102,62 +135,46 @@
     Назад
 </a>
 
-<h1>Списък с родители</h1>
+<h1>Редакция на родители</h1>
 
-<table>
-    <thead>
-    <tr>
-        <th>Име</th>
-        <th>Имейл</th>
-        <th>Дете</th>
-        <th>Действия</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="parent : ${parents}">
-        <form th:action="@{'/admin/parents/edit/' + ${parent.id}}" method="post">
-
-        <td>
-                <input type="text" name="firstName" th:value="${parent.user.firstName}" required placeholder="Име" />
-                <input type="text" name="lastName" th:value="${parent.user.lastName}" required placeholder="Фамилия" />
-            </td>
-            <td>
-                <input type="email" name="email" th:value="${parent.user.email}" required placeholder="email@example.com" />
-            </td>
-            <td>
-                <select name="childId" required>
-                    <option value="">Избери дете</option>
-                    <option th:each="student : ${students}"
-                            th:value="${student.id}"
-                            th:text="${student.user.firstName + ' ' + student.user.lastName}"
-                            th:selected="${parent.child != null and parent.child.id == student.id}">
-                    </option>
-                </select>
-            </td>
-            <td>
-                <button type="submit" class="btn">Запази</button>
-            </td>
-        </form>
-    </tr>
-    </tbody>
-</table>
-<div id="success-message" th:if="${successMessage}"
-     style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 6px; margin-bottom: 20px; text-align: center; font-weight: bold;">
+<div id="success-message" th:if="${successMessage}">
     <span th:text="${successMessage}"></span>
 </div>
 
+<div th:each="parent : ${parents}" class="parent-card">
+    <form th:action="@{'/admin/parents/edit/' + ${parent.id}}" method="post" class="form-group">
+
+        <div class="name-group">
+            <input type="text" name="firstName" th:value="${parent.user.firstName}" required placeholder="Име" />
+            <input type="text" name="lastName" th:value="${parent.user.lastName}" required placeholder="Фамилия" />
+        </div>
+
+        <input type="email" name="email" th:value="${parent.user.email}" required placeholder="email@example.com" />
+
+        <select name="childId" required>
+            <option value="">Избери дете</option>
+            <option th:each="student : ${students}"
+                    th:value="${student.id}"
+                    th:text="${student.user.firstName + ' ' + student.user.lastName}"
+                    th:selected="${parent.child != null and parent.child.id == student.id}">
+            </option>
+        </select>
+
+        <button type="submit" class="btn">💾 Запази</button>
+    </form>
+</div>
+
 <script>
-    window.addEventListener('DOMContentLoaded', (event) => {
+    window.addEventListener('DOMContentLoaded', () => {
         const msg = document.getElementById('success-message');
         if (msg) {
             setTimeout(() => {
-                // плавно скриване с fade out (opacity)
                 msg.style.transition = 'opacity 1s ease';
                 msg.style.opacity = '0';
                 setTimeout(() => {
                     msg.style.display = 'none';
-                }, 1000); // след 1 секунда изчезва напълно
-            }, 3000); // показва се 3 секунди преди да започне fade
+                }, 1000);
+            }, 3000);
         }
     });
 </script>

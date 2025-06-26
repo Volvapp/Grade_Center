@@ -18,7 +18,7 @@ public class Student extends BaseEntity {
     @ManyToOne
     private Classroom classroom;
 
-    @OneToOne
+    @OneToOne(mappedBy = "child")
     private Parent parent;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)

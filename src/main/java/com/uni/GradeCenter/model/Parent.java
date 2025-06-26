@@ -1,6 +1,7 @@
 package com.uni.GradeCenter.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -11,6 +12,7 @@ public class Parent extends BaseEntity{
     private User user;
 
     @OneToOne
+    @JoinColumn(name = "child_id")
     private Student child;
 
     public Parent(User user, Student child) {

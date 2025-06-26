@@ -10,4 +10,7 @@ import java.util.List;
 public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findAllByUser_IdIn(List<Long> userIds);
 
+    void deleteByUserId(Long id);
+
+    Student findByUser_Id(Long id);
 }
