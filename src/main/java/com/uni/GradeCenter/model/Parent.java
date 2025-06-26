@@ -1,11 +1,8 @@
 package com.uni.GradeCenter.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
-import java.util.List;
 
 @Entity
 @Table(name = "parents")

@@ -99,4 +99,25 @@ public class StudentServiceImpl implements StudentService {
     public List<Student> getStudentsByIds(List<Long> studentIds) {
         return this.studentRepository.findAllById(studentIds);
     }
+
+    @Override
+    public List<Student> getStudentsByUserIds(List<Long> userIds) {
+        return studentRepository.findAllByUser_IdIn(userIds);
+    }
+
+    @Override
+    public void updateStudentInline(Long id, String firstName, String lastName, String email, String username, Long schoolId, Long classroomId) {
+        Student student = studentRepository.findById(id).orElseThrow();
+        User user = student.getUser();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        user.setUsername(username);
+        userRepository.save(user);
+
+        student.setSchool(schoolRepository.findById(schoolId).orElse(null));
+        student.setClassroom(classroomRepository.findById(classroomId).orElse(null));
+        studentRepository.save(student);
+    }
+
 }

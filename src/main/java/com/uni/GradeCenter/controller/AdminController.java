@@ -1,12 +1,13 @@
 package com.uni.GradeCenter.controller;
 
 import com.uni.GradeCenter.model.School;
+import com.uni.GradeCenter.model.Student;
 import com.uni.GradeCenter.model.User;
+import com.uni.GradeCenter.model.dto.ParentDTO;
 import com.uni.GradeCenter.model.dto.UserDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateSchoolBindingDTO;
 import com.uni.GradeCenter.model.enums.Role;
-import com.uni.GradeCenter.service.SchoolService;
-import com.uni.GradeCenter.service.UserService;
+import com.uni.GradeCenter.service.*;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
@@ -25,11 +26,17 @@ import java.util.stream.Collectors;
 public class AdminController {
     private final UserService userService;
     private final SchoolService schoolService;
+    private final StudentService studentService;
+    private final ParentService parentService;
+    private final ClassroomService classroomService;
     private final ModelMapper modelMapper;
 
-    public AdminController(UserService userService, SchoolService schoolService, ModelMapper modelMapper) {
+    public AdminController(UserService userService, SchoolService schoolService, StudentService studentService, ParentService parentService, ClassroomService classroomService, ModelMapper modelMapper) {
         this.userService = userService;
         this.schoolService = schoolService;
+        this.studentService = studentService;
+        this.parentService = parentService;
+        this.classroomService = classroomService;
         this.modelMapper = modelMapper;
     }
 
@@ -130,5 +137,57 @@ public class AdminController {
 
         redirectAttributes.addFlashAttribute("successMessage", "Училището беше създадено успешно!");
         return "redirect:/admin/schools";
+    }
+
+    @GetMapping("/students")
+    public String students(Model model) {
+        List<Long> userIds = userService.getUsersByRole(Role.STUDENT)
+                .stream()
+                .map(User::getId)
+                .toList();
+
+        List<Student> studentsByUsers = studentService.getStudentsByUserIds(userIds);
+
+        model.addAttribute("students", studentsByUsers);
+        model.addAttribute("schools", schoolService.getAllSchools());
+        model.addAttribute("classrooms", classroomService.getAllClassrooms());
+        return "admin-students";
+    }
+
+    @PostMapping("/students/edit/{id}")
+    public String editStudent(
+            @PathVariable Long id,
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam String username,
+            @RequestParam Long schoolId,
+            @RequestParam Long classroomId,
+            RedirectAttributes redirectAttributes
+    ) {
+        studentService.updateStudentInline(id, firstName, lastName, email, username, schoolId, classroomId);
+        redirectAttributes.addFlashAttribute("successMessage", "Ученикът е обновен успешно.");
+        return "redirect:/admin/students";
+    }
+
+    @GetMapping("/parents")
+    public String parents(Model model) {
+        model.addAttribute("students", studentService.getAllStudents());
+        model.addAttribute("parents", parentService.getAllParents());
+        return "admin-parents";
+    }
+
+    @PostMapping("/parents/edit/{id}")
+    public String updateParent(@PathVariable Long id,
+                               @RequestParam String firstName,
+                               @RequestParam String lastName,
+                               @RequestParam String email,
+                               @RequestParam Long childId,
+                               RedirectAttributes redirectAttributes) {
+
+        parentService.updateParentInline(id, firstName, lastName, email, childId);
+        redirectAttributes.addFlashAttribute("successMessage", "Родителят е обновен успешно.");
+
+        return "redirect:/admin/parents";
     }
 }

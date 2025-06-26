@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "students")
-public class Student extends BaseEntity{
+public class Student extends BaseEntity {
 
     @OneToOne
     private User user;
@@ -21,10 +21,10 @@ public class Student extends BaseEntity{
     @OneToOne
     private Parent parent;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Grade> grades;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Absence> absences;
 
 
@@ -37,7 +37,10 @@ public class Student extends BaseEntity{
         this.absences = new ArrayList<>();
     }
 
-    public Student() {}
+    public Student() {
+        this.grades = new ArrayList<>();
+        this.absences = new ArrayList<>();
+    }
 
     public User getUser() {
         return user;

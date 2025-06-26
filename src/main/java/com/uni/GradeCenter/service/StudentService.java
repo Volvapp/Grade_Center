@@ -18,4 +18,8 @@ public interface StudentService {
     void initializeStudents();
 
     List<Student> getStudentsByIds(List<Long> studentIds);
+
+    List<Student> getStudentsByUserIds(List<Long> userIds);
+
+    void updateStudentInline(Long id, String firstName, String lastName, String email, String username, Long schoolId, Long classroomId);
 }

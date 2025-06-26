@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ученици | Админ панел</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        /* Основни стилове */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e6f2e6;
+            color: #1a3d1a;
+            margin: 0;
+            padding: 40px 20px 20px 20px;
+        }
+
+        /* Бутон за назад в горния ляв ъгъл */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #2e7d32;
+            color: #e6f2e6;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgb(0 0 0 / 0.15);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            z-index: 1000;
+            text-decoration: none;
+            user-select: none;
+        }
+
+        .back-button:hover,
+        .back-button:focus {
+            background-color: #1b5e20;
+            outline: none;
+            transform: scale(1.05);
+        }
+
+        /* Иконка стрелка наляво */
+        .back-button svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-size: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 14px;
+            background: white;
+            box-shadow: 0 6px 14px rgb(0 0 0 / 0.12);
+            border-radius: 16px;
+            overflow: hidden;
+            font-size: 15px;
+        }
+
+        thead tr {
+            background: #2e7d32;
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        thead th {
+            padding: 18px 14px;
+            text-align: left;
+            user-select: none;
+        }
+
+        tbody tr {
+            background: #f7fcf7;
+            transition: background-color 0.25s ease;
+            box-shadow: 0 2px 8px rgb(0 0 0 / 0.04);
+            border-radius: 12px;
+        }
+
+        tbody tr:hover {
+            background-color: #d0efd0;
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            vertical-align: middle;
+        }
+
+        /* Гъвкави полета за име */
+        .name-fields {
+            display: flex;
+            gap: 14px;
+        }
+
+        .name-fields input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1.5px solid #2e7d32;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #1a3d1a;
+            background: #e9f5e9;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .name-fields input:focus {
+            border-color: #1b5e20;
+            outline: none;
+            background: #d4edda;
+        }
+
+        /* Други input/select */
+        input[type="email"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #2e7d32;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #e9f5e9;
+            color: #1a3d1a;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        input[type="email"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            border-color: #1b5e20;
+            outline: none;
+            background: #d4edda;
+        }
+
+        /* Бутон Запази */
+        .btn-edit {
+            background-color: #388e3c;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgb(56 142 60 / 0.4);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            user-select: none;
+        }
+
+        .btn-edit:hover,
+        .btn-edit:focus {
+            background-color: #2e7d32;
+            box-shadow: 0 6px 14px rgb(46 125 50 / 0.7);
+            outline: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+            }
+
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            tbody tr {
+                margin-bottom: 22px;
+                background: #f7fcf7;
+                box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+                border-radius: 16px;
+                padding: 18px 20px;
+            }
+
+            tbody td {
+                position: relative;
+                padding-left: 55%;
+                text-align: left;
+                border: none;
+                border-bottom: 1px solid #cde1cd;
+                font-size: 15px;
+                font-weight: 600;
+                color: #2e7d32;
+            }
+
+            tbody td:last-child {
+                border-bottom: none;
+                padding-left: 0;
+                text-align: center;
+            }
+
+            tbody td:before {
+                position: absolute;
+                top: 15px;
+                left: 20px;
+                width: 45%;
+                white-space: nowrap;
+                font-weight: 700;
+                color: #2e7d32;
+                content: attr(data-label);
+            }
+
+            .name-fields {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+
+        /* Съобщение за запис */
+        #save-message {
+            margin-top: 20px;
+            padding: 14px 24px;
+            background-color: #2e7d32; /* тъмнозелен */
+            color: #e6f2e6; /* светъл текст */
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            max-width: 420px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 5px 12px rgb(0 0 0 / 0.25);
+            user-select: none;
+            pointer-events: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #save-message.show-message {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #save-message.fade-out {
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Back button -->
+<a th:href="@{/admin/users}" class="back-button" aria-label="Върни се назад">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+    </svg>
+    Назад
+</a>
+
+<h1>Списък с ученици</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Име</th>
+        <th>Имейл</th>
+        <th>Потребителско име</th>
+        <th>Училище</th>
+        <th>Клас</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student : ${students}">
+        <form th:action="@{'/admin/students/edit/' + ${student.id}}" method="post">
+            <td data-label="Име">
+                <div class="name-fields">
+                    <input type="text" name="firstName" th:value="${student.user.firstName}" required placeholder="Име" />
+                    <input type="text" name="lastName" th:value="${student.user.lastName}" required placeholder="Фамилия" />
+                </div>
+            </td>
+            <td data-label="Имейл">
+                <input type="email" name="email" th:value="${student.user.email}" required placeholder="email@example.com" />
+            </td>
+            <td data-label="Потребителско име">
+                <input type="text" name="username" th:value="${student.user.username}" required placeholder="Потребителско име" />
+            </td>
+            <td data-label="Училище">
+                <select name="schoolId" required>
+                    <option th:each="school : ${schools}"
+                            th:value="${school.id}"
+                            th:text="${school.name}"
+                            th:selected="${student.school != null and student.school.id == school.id}">
+                    </option>
+                </select>
+            </td>
+            <td data-label="Клас">
+                <select name="classroomId" required>
+                    <option th:each="classroom : ${classrooms}"
+                            th:value="${classroom.id}"
+                            th:text="${classroom.name}"
+                            th:selected="${student.classroom != null and student.classroom.id == classroom.id}">
+                    </option>
+                </select>
+            </td>
+            <td data-label="Действия">
+                <button type="submit" class="btn-edit" aria-label="Запази промените">Запази</button>
+            </td>
+        </form>
+    </tr>
+    </tbody>
+</table>
+
+<div id="save-message" style="display:none;"></div>
+
+<script>
+    const messageDiv = document.getElementById('save-message');
+
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Показваме съобщението с opacity 1
+            messageDiv.textContent = 'Промяната е записана';
+            messageDiv.style.display = 'block';
+            messageDiv.classList.add('show-message');
+            messageDiv.classList.remove('fade-out'); // премахваме fade-out ако е добавен
+
+            // След 3 секунди стартираме fade out
+            setTimeout(() => {
+                messageDiv.classList.add('fade-out');
+            }, 3000);
+
+            // След като анимацията приключи (1 секунда), скриваме съобщението и пращаме формата
+            messageDiv.addEventListener('transitionend', function handler() {
+                if (messageDiv.classList.contains('fade-out')) {
+                    messageDiv.style.display = 'none';
+                    messageDiv.classList.remove('show-message', 'fade-out');
+                    messageDiv.removeEventListener('transitionend', handler);
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

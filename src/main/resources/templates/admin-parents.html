@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редакция на родители</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #e6f2e6;
+            margin: 0;
+            padding: 20px;
+            color: #1a3d1a;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-button svg {
+            width: 20px;
+            height: 20px;
+            fill: #2e7d32;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        thead {
+            background: #2e7d32;
+            color: white;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: left;
+        }
+
+        tbody tr {
+            background: #f0faf0;
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #d4edda;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1.5px solid #2e7d32;
+            background: #e9f5e9;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            border-color: #1b5e20;
+            outline: none;
+            background: #d4edda;
+        }
+
+        .btn {
+            background-color: #388e3c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+
+<a th:href="@{/admin/users}" class="back-button">
+    <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    Назад
+</a>
+
+<h1>Списък с родители</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Име</th>
+        <th>Имейл</th>
+        <th>Дете</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="parent : ${parents}">
+        <form th:action="@{'/admin/parents/edit/' + ${parent.id}}" method="post">
+
+        <td>
+                <input type="text" name="firstName" th:value="${parent.user.firstName}" required placeholder="Име" />
+                <input type="text" name="lastName" th:value="${parent.user.lastName}" required placeholder="Фамилия" />
+            </td>
+            <td>
+                <input type="email" name="email" th:value="${parent.user.email}" required placeholder="email@example.com" />
+            </td>
+            <td>
+                <select name="childId" required>
+                    <option value="">Избери дете</option>
+                    <option th:each="student : ${students}"
+                            th:value="${student.id}"
+                            th:text="${student.user.firstName + ' ' + student.user.lastName}"
+                            th:selected="${parent.child != null and parent.child.id == student.id}">
+                    </option>
+                </select>
+            </td>
+            <td>
+                <button type="submit" class="btn">Запази</button>
+            </td>
+        </form>
+    </tr>
+    </tbody>
+</table>
+<div id="success-message" th:if="${successMessage}"
+     style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 6px; margin-bottom: 20px; text-align: center; font-weight: bold;">
+    <span th:text="${successMessage}"></span>
+</div>
+
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const msg = document.getElementById('success-message');
+        if (msg) {
+            setTimeout(() => {
+                // плавно скриване с fade out (opacity)
+                msg.style.transition = 'opacity 1s ease';
+                msg.style.opacity = '0';
+                setTimeout(() => {
+                    msg.style.display = 'none';
+                }, 1000); // след 1 секунда изчезва напълно
+            }, 3000); // показва се 3 секунди преди да започне fade
+        }
+    });
+</script>
+
+</body>
+</html>
