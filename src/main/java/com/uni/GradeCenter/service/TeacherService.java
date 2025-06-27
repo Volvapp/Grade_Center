@@ -15,6 +15,8 @@ public interface TeacherService {
 
     void initializeTeachers();
 
+    List<Teacher> getAllTeachers();
+
     List<Teacher> getTeachersByIds(List<Long> teacherIds);
 
     void deleteByUserId(Long id);

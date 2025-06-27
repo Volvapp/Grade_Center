@@ -78,6 +78,11 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public List<Teacher> getAllTeachers() {
+        return this.teacherRepository.findAll();
+    }
+
+    @Override
     public List<Teacher> getTeachersByIds(List<Long> teacherIds) {
         return this.teacherRepository.findAllById(teacherIds);
     }

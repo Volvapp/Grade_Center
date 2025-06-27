@@ -1,8 +1,6 @@
 package com.uni.GradeCenter.controller;
 
-import com.uni.GradeCenter.model.School;
-import com.uni.GradeCenter.model.Student;
-import com.uni.GradeCenter.model.User;
+import com.uni.GradeCenter.model.*;
 import com.uni.GradeCenter.model.dto.ParentDTO;
 import com.uni.GradeCenter.model.dto.UserDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateSchoolBindingDTO;
@@ -29,14 +27,20 @@ public class AdminController {
     private final StudentService studentService;
     private final ParentService parentService;
     private final ClassroomService classroomService;
+    private final TeacherService teacherService;
+    private final ScheduleService scheduleService;
+    private final SubjectService subjectService;
     private final ModelMapper modelMapper;
 
-    public AdminController(UserService userService, SchoolService schoolService, StudentService studentService, ParentService parentService, ClassroomService classroomService, ModelMapper modelMapper) {
+    public AdminController(UserService userService, SchoolService schoolService, StudentService studentService, ParentService parentService, ClassroomService classroomService, TeacherService teacherService, ScheduleService scheduleService, SubjectService subjectService, ModelMapper modelMapper) {
         this.userService = userService;
         this.schoolService = schoolService;
         this.studentService = studentService;
         this.parentService = parentService;
         this.classroomService = classroomService;
+        this.teacherService = teacherService;
+        this.scheduleService = scheduleService;
+        this.subjectService = subjectService;
         this.modelMapper = modelMapper;
     }
 
@@ -190,4 +194,52 @@ public class AdminController {
 
         return "redirect:/admin/parents";
     }
+
+    @GetMapping("/teachers")
+    public String teachers(
+            @RequestParam(required = false) Long editId,
+            Model model
+    ) {
+        List<Teacher> teachers = teacherService.getAllTeachers();
+        model.addAttribute("teachers", teachers);
+
+        if (editId != null) {
+            Teacher teacher = teacherService.getTeacherById(editId);
+            List<School> schools = schoolService.getAllSchools();
+            List<Subject> subjects = subjectService.getAllSubjects();
+
+            model.addAttribute("teacherToEdit", teacher);
+            model.addAttribute("schools", schools);
+            model.addAttribute("subjects", subjects);
+        }
+
+        return "admin-teachers"; // единичен шаблон
+    }
+
+    @PostMapping("/teachers/{id}")
+    public String updateTeacher(
+            @PathVariable Long id,
+            @RequestParam Long schoolId,
+            @RequestParam(required = false, name = "qualifiedSubjects") List<Long> qualifiedSubjectsIds,
+            RedirectAttributes redirectAttributes
+    ) {
+        Teacher teacher = teacherService.getTeacherById(id);
+
+        School school = schoolService.getSchoolById(schoolId);
+        teacher.setSchool(school);
+
+        if (qualifiedSubjectsIds != null && !qualifiedSubjectsIds.isEmpty()) {
+            List<Subject> subjects = subjectService.getAllSubjectsByIds(qualifiedSubjectsIds);
+            teacher.setQualifiedSubjects(subjects);
+        } else {
+            teacher.setQualifiedSubjects(new ArrayList<>());
+        }
+
+        teacherService.updateTeacher(teacher);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Промяната е направена успешно!");
+        return "redirect:/admin/teachers";
+    }
+
+
 }

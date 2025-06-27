@@ -50,6 +50,11 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public List<Subject> getAllSubjectsByIds(List<Long> ids) {
+        return this.subjectRepository.findAllById(ids);
+    }
+
+    @Override
     public void initializeSubjects() {
         if (subjectRepository.count() > 0) return;
 

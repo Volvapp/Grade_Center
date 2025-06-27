@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Преподаватели</title>
+    <style>
+        /* Базови стилове */
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #d6eadf 0%, #a3d29f 100%);
+            margin: 20px;
+            color: #2f5d3e;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 40px;
+        }
+
+        h1 {
+            font-weight: 900;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Таблица */
+        table {
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            width: 100%;
+            max-width: 760px;
+            box-shadow: 0 6px 12px rgba(50, 115, 75, 0.15);
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        thead tr {
+            background-color: #317a44;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        tbody tr {
+            background: #f3fbf6;
+            transition: box-shadow 0.3s ease;
+            cursor: default;
+        }
+        tbody tr:hover {
+            box-shadow: 0 4px 14px rgba(49, 122, 68, 0.3);
+        }
+
+        th, td {
+            padding: 14px 20px;
+            border: none;
+        }
+
+        /* Бутон за редактиране */
+        a.button {
+            display: inline-block;
+            background-color: #317a44;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 8px rgba(49,122,68,0.5);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            user-select: none;
+        }
+        a.button:hover, a.button:focus {
+            background-color: #255d34;
+            box-shadow: 0 6px 14px rgba(37, 93, 52, 0.7);
+            outline: none;
+        }
+
+        /* Форма */
+        form {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(50, 115, 75, 0.25);
+            max-width: 520px;
+            width: 100%;
+            padding: 36px 48px;
+            box-sizing: border-box;
+            transition: box-shadow 0.3s ease;
+            user-select: none;
+        }
+        form:hover {
+            box-shadow: 0 12px 35px rgba(50, 115, 75, 0.35);
+        }
+
+        h2 {
+            font-weight: 800;
+            font-size: 1.9rem;
+            margin-bottom: 28px;
+            color: #255d34;
+            text-align: center;
+            user-select: text;
+        }
+
+        label {
+            display: block;
+            margin-top: 22px;
+            color: #317a44;
+            font-weight: 700;
+            font-size: 1.1rem;
+            user-select: text;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px 16px;
+            margin-top: 6px;
+            font-size: 1.05rem;
+            border-radius: 12px;
+            border: 2px solid #a3d29f;
+            background-color: #f3fbf6;
+            color: #2f5d3e;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+            box-sizing: border-box;
+            user-select: text;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: #3ba55d;
+            background-color: #e9f7ed;
+            outline: none;
+        }
+
+        input[readonly] {
+            background-color: #d4e9d8;
+            cursor: not-allowed;
+            opacity: 0.7;
+            user-select: none;
+        }
+
+        /* Checkbox group */
+        .checkbox-group {
+            max-height: 160px;
+            overflow-y: auto;
+            border: 2px solid #a3d29f;
+            border-radius: 12px;
+            background-color: #f3fbf6;
+            padding: 14px 20px;
+            margin-top: 8px;
+            box-sizing: border-box;
+            user-select: none;
+            scrollbar-width: thin;
+            scrollbar-color: #317a44 #d4e9d8;
+        }
+        .checkbox-group::-webkit-scrollbar {
+            width: 8px;
+        }
+        .checkbox-group::-webkit-scrollbar-track {
+            background: #d4e9d8;
+            border-radius: 10px;
+        }
+        .checkbox-group::-webkit-scrollbar-thumb {
+            background-color: #317a44;
+            border-radius: 10px;
+            border: 2px solid #d4e9d8;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #2f5d3e;
+            cursor: pointer;
+            user-select: none;
+            font-size: 1rem;
+            transition: color 0.2s ease;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            margin-right: 14px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #317a44;
+            border-radius: 4px;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .checkbox-label input[type="checkbox"]:hover {
+            transform: scale(1.15);
+        }
+
+        .checkbox-label:hover {
+            color: #255d34;
+        }
+
+        .helper-text {
+            font-size: 0.9rem;
+            color: #5a9461;
+            margin-top: 6px;
+            font-weight: 600;
+            user-select: none;
+        }
+
+        /* Submit button */
+        button {
+            margin-top: 30px;
+            background-color: #317a44;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 800;
+            box-shadow: 0 6px 16px rgba(49, 122, 68, 0.7);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            user-select: none;
+        }
+        button:hover, button:focus {
+            background-color: #255d34;
+            box-shadow: 0 10px 22px rgba(37, 93, 52, 0.9);
+            outline: none;
+        }
+
+        /* Връщане назад бутон */
+        .back-button {
+            max-width: 760px;
+            width: 100%;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .back-button a {
+            font-weight: 700;
+            color: #317a44;
+            text-decoration: none;
+            background: #c5e1b2;
+            padding: 10px 18px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(50, 115, 75, 0.4);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            user-select: none;
+            display: inline-block;
+        }
+        .back-button a:hover, .back-button a:focus {
+            background-color: #9ac46a;
+            box-shadow: 0 6px 20px rgba(37, 93, 52, 0.7);
+            outline: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 720px) {
+            form {
+                padding: 28px 30px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.6rem;
+            }
+            table {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 400px) {
+            button, a.button {
+                font-size: 1rem;
+                padding: 12px 18px;
+            }
+            label, .checkbox-label {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="back-button">
+    <a href="/admin/users" title="Обратно към потребители">← Обратно към потребители</a>
+</div>
+
+<h1>Преподаватели</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Потребител</th>
+        <th>Училище</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="teacher : ${teachers}">
+        <td th:text="${teacher.user.username}">Username</td>
+        <td th:text="${teacher.school != null ? teacher.school.name : '-'}">School</td>
+        <td>
+            <a th:href="@{/admin/teachers(editId=${teacher.id})}" class="button" tabindex="0">Редактирай</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:if="${teacherToEdit != null}">
+    <h2>Редактиране на преподавател</h2>
+    <form th:action="@{/admin/teachers/{id}(id=${teacherToEdit.id})}" method="post" novalidate>
+        <input type="hidden" name="id" th:value="${teacherToEdit.id}" />
+
+        <label for="user">Потребител</label>
+        <input type="text" id="user" name="user" readonly th:value="${teacherToEdit.user.username}" autocomplete="off" />
+
+        <label for="school">Училище</label>
+        <select id="school" name="schoolId" required>
+            <option value="" disabled>-- Изберете училище --</option>
+            <option th:each="school : ${schools}"
+                    th:value="${school.id}"
+                    th:text="${school.name}"
+                    th:selected="${teacherToEdit.school != null} ? ${school.id} == ${teacherToEdit.school.id} : false">
+            </option>
+        </select>
+
+        <label>Квалифицирани предмети</label>
+        <div class="checkbox-group" tabindex="0" aria-label="Квалифицирани предмети">
+            <div th:each="subject : ${subjects}">
+                <label class="checkbox-label">
+                    <input type="checkbox"
+                           name="qualifiedSubjects"
+                           th:value="${subject.id}"
+                           th:checked="${teacherToEdit.qualifiedSubjects.contains(subject)}" />
+                    <span th:text="${subject.name}">Предмет</span>
+                </label>
+            </div>
+        </div>
+
+        <p class="helper-text">Изберете един или повече предмети</p>
+
+        <button type="submit">Запази промените</button>
+    </form>
+</div>
+
+</body>
+</html>
