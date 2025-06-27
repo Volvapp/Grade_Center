@@ -66,28 +66,30 @@ public class AdminController {
 
     @GetMapping("/schools")
     public String schools(Model model) {
-
         model.addAttribute("schools", schoolService.getAllSchoolDTOs());
-
         model.addAttribute("directors", userService.getUsersByRole(Role.DIRECTOR));
-
         return "admin-schools";
     }
+
 
     @PostMapping("/schools/edit/{id}")
     public String editSchool(
             @PathVariable Long id,
             @RequestParam String name,
             @RequestParam String address,
-            @RequestParam Long directorId,
+            @RequestParam(required = false) Long directorId,
             RedirectAttributes redirectAttributes
     ) {
         School school = schoolService.getSchoolById(id);
         school.setName(name);
         school.setAddress(address);
 
-        User director = userService.getUserById(directorId);
-        school.setDirector(director);
+        if (directorId != null) {
+            User director = userService.getUserById(directorId);
+            school.setDirector(director);
+        } else {
+            school.setDirector(null);
+        }
 
         schoolService.updateSchool(school);
 
@@ -95,6 +97,7 @@ public class AdminController {
 
         return "redirect:/admin/schools";
     }
+
 
     @GetMapping("/schools/create")
     public String createSchoolForm(Model model) {

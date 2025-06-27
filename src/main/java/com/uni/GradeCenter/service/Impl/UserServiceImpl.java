@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -20,14 +22,16 @@ public class UserServiceImpl implements UserService {
     private final TeacherService teacherService;
     private final StudentService studentService;
     private final ParentService parentService;
+    private final SchoolService schoolService;
     private final AbsenceService absenceService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, TeacherService teacherService, StudentService studentService, ParentService parentService, AbsenceService absenceService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, TeacherService teacherService, StudentService studentService, ParentService parentService, SchoolService schoolService, AbsenceService absenceService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.teacherService = teacherService;
         this.studentService = studentService;
         this.parentService = parentService;
+        this.schoolService = schoolService;
         this.absenceService = absenceService;
     }
 
@@ -118,7 +122,9 @@ public class UserServiceImpl implements UserService {
         updateBasicUserInfo(user, userDTO);
 
         if (userDTO.getRole() != null && userDTO.getRole() != oldRole) {
-            removeOldRoleRelations(id, oldRole);
+            if (oldRole != null) {
+                removeOldRoleRelations(id, oldRole);
+            }
             assignNewRole(user, userDTO.getRole());
             user.setRole(userDTO.getRole());
         }
@@ -208,4 +214,6 @@ public class UserServiceImpl implements UserService {
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username);
     }
+
+
 }

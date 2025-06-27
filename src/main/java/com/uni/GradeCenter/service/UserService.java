@@ -32,4 +32,5 @@ public interface UserService {
     Optional<User> findByRoleAndUsername(Role role, String director);
 
     User findByUsername(String username);
+
 }

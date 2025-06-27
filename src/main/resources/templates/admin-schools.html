@@ -275,13 +275,15 @@
                     <input type="text" name="address" th:value="${school.address}" required />
                 </td>
                 <td data-label="Директор">
-                    <select name="directorId" required>
+                    <select name="directorId">
+                        <option value="">-- Без директор --</option>
                         <option th:each="dir : ${directors}"
                                 th:value="${dir.id}"
                                 th:text="${dir.firstName + ' ' + dir.lastName}"
                                 th:selected="${dir.id == school.directorId}">
                         </option>
                     </select>
+
                 </td>
                 <td data-label="Учители">
                     <div class="readonly-list" th:text="${#strings.listJoin(school.teacherIds, ', ')}">Учители</div>
