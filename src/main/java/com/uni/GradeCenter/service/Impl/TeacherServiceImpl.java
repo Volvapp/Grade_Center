@@ -13,6 +13,7 @@ import com.uni.GradeCenter.service.SchoolService;
 import com.uni.GradeCenter.service.SubjectService;
 import com.uni.GradeCenter.service.TeacherService;
 import com.uni.GradeCenter.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final SchoolService schoolService;
     private final SubjectService subjectService;
 
-    public TeacherServiceImpl(TeacherRepository teacherRepository, UserService userService, SchoolService schoolService, SubjectService subjectService) {
+    public TeacherServiceImpl(TeacherRepository teacherRepository, @Lazy UserService userService, SchoolService schoolService, SubjectService subjectService) {
         this.teacherRepository = teacherRepository;
         this.userService = userService;
         this.schoolService = schoolService;
@@ -58,40 +59,45 @@ public class TeacherServiceImpl implements TeacherService {
     public void initializeTeachers() {
         if (teacherRepository.count() > 0) return;
 
-        // Вземи учителския User
-        User teacherUser = userService.findByRoleAndUsername(Role.TEACHER, "teacher")
-                .orElseThrow(() -> new IllegalStateException("No user with role TEACHER found."));
-
+        // Вземи потребителите (учители)
+        User teacherUser1 = userService.findByRoleAndUsername(Role.TEACHER, "teacher")
+                .orElseThrow(() -> new IllegalStateException("User 'teacher' not found."));
         User teacherUser2 = userService.findByRoleAndUsername(Role.TEACHER, "teacher2")
-                .orElseThrow(() -> new IllegalStateException("No user with role TEACHER found."));
-
+                .orElseThrow(() -> new IllegalStateException("User 'teacher2' not found."));
         User teacherUser3 = userService.findByRoleAndUsername(Role.TEACHER, "teacher3")
-                .orElseThrow(() -> new IllegalStateException("No user with role TEACHER found."));
-
+                .orElseThrow(() -> new IllegalStateException("User 'teacher3' not found."));
         User teacherUser4 = userService.findByRoleAndUsername(Role.TEACHER, "teacher4")
-                .orElseThrow(() -> new IllegalStateException("No user with role TEACHER found."));
+                .orElseThrow(() -> new IllegalStateException("User 'teacher4' not found."));
 
-        // Вземи училище
-        School school = schoolService.getSchoolById(1L);
+        // Вземи училищата
+        School school1 = schoolService.findBySchoolName("First Language School")
+                .orElseThrow(() -> new IllegalStateException("School 1 not found."));
+        School school2 = schoolService.findBySchoolName("Second Language School")
+                .orElseThrow(() -> new IllegalStateException("School 2 not found."));
+        School school3 = schoolService.findBySchoolName("Third Language School")
+                .orElseThrow(() -> new IllegalStateException("School 3 not found."));
+        School school4 = schoolService.findBySchoolName("Fourth Language School")
+                .orElseThrow(() -> new IllegalStateException("School 4 not found."));
 
-        Subject subject1 = subjectService.getSubjectById(1L);
-        Subject subject2 = subjectService.getSubjectById(2L);
-        Subject subject3 = subjectService.getSubjectById(3L);
-        Subject subject4 = subjectService.getSubjectById(4L);
+        // Вземи предмети (4 различни за всеки учител ако има поне 16)
+        List<Subject> allSubjects = subjectService.findAll(); // или subjectRepository.findAll()
+        if (allSubjects.size() < 16) {
+            throw new IllegalStateException("Not enough subjects to assign uniquely to each teacher.");
+        }
 
-        Teacher teacher = new Teacher(teacherUser, school);
-        teacher.setQualifiedSubjects(List.of(subject1, subject2, subject3, subject4));
+        Teacher teacher1 = new Teacher(teacherUser1, school1);
+        teacher1.setQualifiedSubjects(allSubjects.subList(0, 4));
 
-        Teacher teacher2 = new Teacher(teacherUser, school);
-        teacher2.setQualifiedSubjects(List.of(subject1, subject2, subject3, subject4));
+        Teacher teacher2 = new Teacher(teacherUser2, school2);
+        teacher2.setQualifiedSubjects(allSubjects.subList(4, 8));
 
-        Teacher teacher3 = new Teacher(teacherUser, school);
-        teacher3.setQualifiedSubjects(List.of(subject1, subject2, subject3, subject4));
+        Teacher teacher3 = new Teacher(teacherUser3, school3);
+        teacher3.setQualifiedSubjects(allSubjects.subList(8, 12));
 
-        Teacher teacher4 = new Teacher(teacherUser, school);
-        teacher4.setQualifiedSubjects(List.of(subject1, subject2, subject3, subject4));
+        Teacher teacher4 = new Teacher(teacherUser4, school4);
+        teacher4.setQualifiedSubjects(allSubjects.subList(12, 16));
 
-        teacherRepository.saveAll(List.of(teacher, teacher2, teacher3, teacher4));
+        teacherRepository.saveAll(List.of(teacher1, teacher2, teacher3, teacher4));
     }
 
     @Override

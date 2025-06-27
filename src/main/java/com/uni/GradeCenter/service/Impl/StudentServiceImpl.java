@@ -4,6 +4,7 @@ import com.uni.GradeCenter.model.*;
 import com.uni.GradeCenter.model.enums.Role;
 import com.uni.GradeCenter.repository.*;
 import com.uni.GradeCenter.service.*;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class StudentServiceImpl implements StudentService {
     private final ClassroomService classroomService;
     private final ParentService parentService;
 
-    public StudentServiceImpl(StudentRepository studentRepository, UserService userService, SchoolService schoolService, ClassroomService classroomService, ParentService parentService) {
+    public StudentServiceImpl(StudentRepository studentRepository, @Lazy UserService userService, SchoolService schoolService, ClassroomService classroomService, ParentService parentService) {
         this.studentRepository = studentRepository;
         this.userService = userService;
         this.schoolService = schoolService;
@@ -55,45 +56,40 @@ public class StudentServiceImpl implements StudentService {
     public void initializeStudents() {
         if (studentRepository.count() > 0) return;
 
-        // Вземи ученическия User
-        User studentUser = userService.findByRole(Role.STUDENT)
-                .orElseThrow(() -> new IllegalStateException("No user with role STUDENT found."));
-
-        // Вземи училище
         School school = schoolService.getAllSchools().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No school found."));
 
-        // Вземи клас
         Classroom classroom = classroomService.findAll().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No classroom found."));
 
-        // Създай студент (без родител засега)
-        Student student = new Student();
-        student.setUser(studentUser);
-        student.setSchool(school);
-        student.setClassroom(classroom);
+        // Пример с няколко студента и родители
+        List<String> studentUsernames = List.of("student", "student2", "student3", "student4");
+        List<String> parentUsernames = List.of("parent", "parent2", "parent3", "parent4");
 
-        // Запиши студента
-        Student savedStudent = studentRepository.save(student);
+        for (int i = 0; i < studentUsernames.size(); i++) {
+            User studentUser = userService.findByUsername(studentUsernames.get(i));
+            User parentUser = userService.findByUsername(parentUsernames.get(i));
 
-        // Вземи родителския User
-        User parentUser = userService.findByRole(Role.PARENT)
-                .orElseThrow(() -> new IllegalStateException("No user with role PARENT found."));
+            Student student = new Student();
+            student.setUser(studentUser);
+            student.setSchool(school);
+            student.setClassroom(classroom);
 
-        // Създай родител и го свържи със студента
-        Parent parent = new Parent();
-        parent.setUser(parentUser);
-        parent.setChild(savedStudent);
+            Student savedStudent = studentRepository.save(student);
 
-        // Задай и родителя на студента (двупосочно)
-        savedStudent.setParent(parent);
+            Parent parent = new Parent();
+            parent.setUser(parentUser);
+            parent.setChild(savedStudent);
 
-        // Запиши и двата (студентът вече е записан, сега само обновяваме)
-        parentService.createParent(parent);
-        studentRepository.save(savedStudent); // обновен със setParent
+            savedStudent.setParent(parent);
+
+            parentService.createParent(parent);
+            studentRepository.save(savedStudent);
+        }
     }
+
 
     @Override
     public List<Student> getStudentsByIds(List<Long> studentIds) {

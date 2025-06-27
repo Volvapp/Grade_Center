@@ -30,4 +30,6 @@ public interface UserService {
     List<User> getUsersByRole(Role role);
 
     Optional<User> findByRoleAndUsername(Role role, String director);
+
+    User findByUsername(String username);
 }

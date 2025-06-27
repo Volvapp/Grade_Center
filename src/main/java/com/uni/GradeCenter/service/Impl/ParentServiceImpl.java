@@ -20,7 +20,7 @@ public class ParentServiceImpl implements ParentService {
     private final UserService userService;
     private final StudentService studentService;
 
-    public ParentServiceImpl(ParentRepository parentRepository, @Lazy UserService userService, StudentService studentService) {
+    public ParentServiceImpl(ParentRepository parentRepository, @Lazy UserService userService,@Lazy StudentService studentService) {
         this.parentRepository = parentRepository;
         this.userService = userService;
         this.studentService = studentService;

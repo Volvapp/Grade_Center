@@ -73,161 +73,40 @@ public class UserServiceImpl implements UserService {
     public void initializeUsers() {
         if (userRepository.count() > 0) return;
 
-        User admin = new User(
-                "admin",
-                passwordEncoder.encode("1234"),
-                "Admin",
-                "User",
-                "admin@example.com",
-                Role.ADMIN
+        List<User> usersToSave = List.of(
+                newUser("admin", "Admin", "User", "admin@example.com", Role.ADMIN),
+                newUser("director", "Diana", "Director", "director@example.com", Role.DIRECTOR),
+                newUser("director2", "Zlatko", "Director", "director2@example.com", Role.DIRECTOR),
+                newUser("director3", "Guliver", "Director", "director3@example.com", Role.DIRECTOR),
+                newUser("director4", "Yonko", "Director", "director4@example.com", Role.DIRECTOR),
+                newUser("teacher", "Tom", "Teacher", "teacher@example.com", Role.TEACHER),
+                newUser("teacher2", "Zeus", "Teacher", "teacher2@example.com", Role.TEACHER),
+                newUser("teacher3", "Loki", "Teacher", "teacher3@example.com", Role.TEACHER),
+                newUser("teacher4", "Aristotel", "Teacher", "teacher4@example.com", Role.TEACHER),
+                newUser("student", "Sara", "Student", "student@example.com", Role.STUDENT),
+                newUser("student2", "Yosif", "Student", "student2@example.com", Role.STUDENT),
+                newUser("student3", "Goril", "Student", "student3@example.com", Role.STUDENT),
+                newUser("student4", "Ivaila", "Student", "student4@example.com", Role.STUDENT),
+                newUser("parent", "Peter", "Parent", "parent@example.com", Role.PARENT),
+                newUser("parent2", "Dragan", "Parent", "parent2@example.com", Role.PARENT),
+                newUser("parent3", "Igor", "Parent", "parent3@example.com", Role.PARENT),
+                newUser("parent4", "Oliver", "Parent", "parent4@example.com", Role.PARENT)
         );
 
-        User director = new User(
-                "director",
-                passwordEncoder.encode("1234"),
-                "Diana",
-                "Director",
-                "director@example.com",
-                Role.DIRECTOR
-        );
-
-        User director2 = new User(
-                "director2",
-                passwordEncoder.encode("1234"),
-                "Zlatko",
-                "Director",
-                "director2@example.com",
-                Role.DIRECTOR
-        );
-
-        User director3 = new User(
-                "director3",
-                passwordEncoder.encode("1234"),
-                "Guliver",
-                "Director",
-                "director3@example.com",
-                Role.DIRECTOR
-        );
-
-        User director4 = new User(
-                "director4",
-                passwordEncoder.encode("1234"),
-                "Yonko",
-                "Director",
-                "director4@example.com",
-                Role.DIRECTOR
-        );
-
-        User teacher = new User(
-                "teacher",
-                passwordEncoder.encode("1234"),
-                "Tom",
-                "Teacher",
-                "teacher@example.com",
-                Role.TEACHER
-        );
-
-        User teacher2 = new User(
-                "teacher2",
-                passwordEncoder.encode("1234"),
-                "Zeus",
-                "Teacher",
-                "teacher2@example.com",
-                Role.TEACHER
-        );
-
-        User teacher3 = new User(
-                "teacher3",
-                passwordEncoder.encode("1234"),
-                "Loki",
-                "Teacher",
-                "teacher3@example.com",
-                Role.TEACHER
-        );
-
-        User teacher4 = new User(
-                "teacher4",
-                passwordEncoder.encode("1234"),
-                "Aristotel",
-                "Teacher",
-                "teacher4@example.com",
-                Role.TEACHER
-        );
-
-        User student = new User(
-                "student",
-                passwordEncoder.encode("1234"),
-                "Sara",
-                "Student",
-                "student@example.com",
-                Role.STUDENT
-        );
-
-        User student2 = new User(
-                "student2",
-                passwordEncoder.encode("1234"),
-                "Yosif",
-                "Student",
-                "student2@example.com",
-                Role.STUDENT
-        );
-
-        User student3 = new User(
-                "student3",
-                passwordEncoder.encode("1234"),
-                "Goril",
-                "Student",
-                "student3@example.com",
-                Role.STUDENT
-        );
-
-        User student4 = new User(
-                "student4",
-                passwordEncoder.encode("1234"),
-                "Ivaila",
-                "Student",
-                "student4@example.com",
-                Role.STUDENT
-        );
-
-        User parent = new User(
-                "parent",
-                passwordEncoder.encode("1234"),
-                "Peter",
-                "Parent",
-                "parent@example.com",
-                Role.PARENT
-        );
-
-        User parent2 = new User(
-                "parent2",
-                passwordEncoder.encode("1234"),
-                "Dragan",
-                "Parent",
-                "parent2@example.com",
-                Role.PARENT
-        );
-
-        User parent3 = new User(
-                "parent3",
-                passwordEncoder.encode("1234"),
-                "Igor",
-                "Parent",
-                "parent3@example.com",
-                Role.PARENT
-        );
-
-        User parent4 = new User(
-                "parent4",
-                passwordEncoder.encode("1234"),
-                "Oliver",
-                "Parent",
-                "parent4@example.com",
-                Role.PARENT
-        );
-
-        userRepository.saveAll(List.of(admin, director, teacher, student, parent));
+        userRepository.saveAll(usersToSave);
     }
+
+    private User newUser(String username, String firstName, String lastName, String email, Role role) {
+        return new User(
+                username,
+                passwordEncoder.encode("1234"),
+                firstName,
+                lastName,
+                email,
+                role
+        );
+    }
+
     @Override
     @Transactional
     public void updateUserFromDTO(Long id, UserDTO userDTO) {
@@ -323,5 +202,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByRoleAndUsername(Role role, String director) {
         return userRepository.findByRoleAndUsername(role, director);
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        return this.userRepository.findByUsername(username);
     }
 }

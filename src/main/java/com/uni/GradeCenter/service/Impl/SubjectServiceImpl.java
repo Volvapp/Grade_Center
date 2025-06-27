@@ -8,6 +8,7 @@ import com.uni.GradeCenter.service.SchoolService;
 import com.uni.GradeCenter.service.SubjectService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,39 +60,29 @@ public class SubjectServiceImpl implements SubjectService {
     public void initializeSubjects() {
         if (subjectRepository.count() > 0) return;
 
-        Optional<School> schoolOpt = schoolService.findBySchoolName("First Language School");
-        Optional<School> schoolOpt2 = schoolService.findBySchoolName("Second Language School");
-        Optional<School> schoolOpt3 = schoolService.findBySchoolName("Third Language School");
-        Optional<School> schoolOpt4 = schoolService.findBySchoolName("Fourth Language School");
+        List<SchoolSubjectData> schoolSubjectDataList = List.of(
+                new SchoolSubjectData("First Language School", List.of("Mathematics", "History", "Biology", "English")),
+                new SchoolSubjectData("Second Language School", List.of("Physics", "Chemistry", "Philosophy", "English Literature")),
+                new SchoolSubjectData("Third Language School", List.of("Geography", "Informatics", "Art", "Physical Education")),
+                new SchoolSubjectData("Fourth Language School", List.of("Music", "Economics", "Programming", "Statistics"))
+        );
 
-        if (schoolOpt.isEmpty()) {
-            throw new IllegalStateException("No schools found! Cannot create subjects without a school.");
+        List<Subject> allSubjects = new ArrayList<>();
+
+        for (SchoolSubjectData schoolData : schoolSubjectDataList) {
+            School school = schoolService.findBySchoolName(schoolData.schoolName())
+                    .orElseThrow(() -> new IllegalStateException("School not found: " + schoolData.schoolName()));
+
+            for (String subjectName : schoolData.subjectNames()) {
+                allSubjects.add(new Subject(subjectName, school));
+            }
         }
 
-        School school = schoolOpt.get();
-
-        Subject math = new Subject("Mathematics", school);
-        Subject history = new Subject("History", school);
-        Subject biology = new Subject("Biology", school);
-        Subject english = new Subject("English", school);
-
-        Subject math2 = new Subject("Mathematics", schoolOpt2.get());
-        Subject history2 = new Subject("History", schoolOpt2.get());
-        Subject biology2 = new Subject("Biology", schoolOpt2.get());
-        Subject english2 = new Subject("English", schoolOpt2.get());
-
-        Subject math3 = new Subject("Mathematics", schoolOpt3.get());
-        Subject history3 = new Subject("History", schoolOpt3.get());
-        Subject biology3 = new Subject("Biology", schoolOpt3.get());
-        Subject english3 = new Subject("English", schoolOpt3.get());
-
-        Subject math4 = new Subject("Mathematics", schoolOpt4.get());
-        Subject history4 = new Subject("History", schoolOpt4.get());
-        Subject biology4 = new Subject("Biology", schoolOpt4.get());
-        Subject english4 = new Subject("English", schoolOpt4.get());
-
-        subjectRepository.saveAll(List.of(math, history, biology, english, math2, history2, biology2, english2, math3, history3, biology3, english3, math4, history4, biology4, english4));
+        subjectRepository.saveAll(allSubjects);
     }
+
+    private record SchoolSubjectData(String schoolName, List<String> subjectNames) {}
+
 
     @Override
     public List<Subject> findAll() {

@@ -9,8 +9,10 @@ import com.uni.GradeCenter.repository.UserRepository;
 import com.uni.GradeCenter.service.SchoolService;
 import com.uni.GradeCenter.service.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +25,7 @@ public class SchoolServiceImpl implements SchoolService {
     private final ModelMapper modelMapper;
     private final UserService userService;
 
-    public SchoolServiceImpl(SchoolRepository schoolRepository, ModelMapper modelMapper, UserService userService) {
+    public SchoolServiceImpl(SchoolRepository schoolRepository, ModelMapper modelMapper,@Lazy UserService userService) {
         this.schoolRepository = schoolRepository;
         this.modelMapper = modelMapper;
         this.userService = userService;
@@ -59,43 +61,33 @@ public class SchoolServiceImpl implements SchoolService {
     public void initializeSchools() {
         if (schoolRepository.count() > 0) return;
 
-        // Намери директор
-        Optional<User> directorOpt = userService.findByRoleAndUsername(Role.DIRECTOR, "director");
+        // Данни за училищата и съответните директори
+        List<SchoolInitData> schoolsData = List.of(
+                new SchoolInitData("director", "First Language School", "1000 Sofia, Bulgaria Blvd. 1"),
+                new SchoolInitData("director2", "Second Language School", "1000 Blagoevgrad, Bulgaria Blvd. 1"),
+                new SchoolInitData("director3", "Third Language School", "1000 Burgas, Bulgaria Blvd. 1"),
+                new SchoolInitData("director4", "Fourth Language School", "1000 Varna, Bulgaria Blvd. 1")
+        );
 
-        Optional<User> directorOpt2 = userService.findByRoleAndUsername(Role.DIRECTOR, "director2");
+        List<School> schoolsToSave = new ArrayList<>();
 
-        Optional<User> directorOpt3 = userService.findByRoleAndUsername(Role.DIRECTOR, "director3");
+        for (SchoolInitData data : schoolsData) {
+            User director = userService.findByRoleAndUsername(Role.DIRECTOR, data.username())
+                    .orElseThrow(() -> new IllegalStateException("Director '" + data.username() + "' not found"));
 
-        Optional<User> directorOpt4 = userService.findByRoleAndUsername(Role.DIRECTOR, "director4");
+            School school = new School();
+            school.setName(data.name());
+            school.setAddress(data.address());
+            school.setDirector(director);
 
-        if (directorOpt.isEmpty() && directorOpt2.isEmpty() && directorOpt3.isEmpty() && directorOpt4.isEmpty()) {
-            throw new IllegalStateException("No user with role DIRECTOR found!");
+            schoolsToSave.add(school);
         }
 
-        User director = directorOpt.get();
-
-        School school = new School();
-        school.setName("First Language School");
-        school.setAddress("1000 Sofia, Bulgaria Blvd. 1");
-        school.setDirector(director);
-
-        School school2 = new School();
-        school.setName("Second Language School");
-        school.setAddress("1000 Blagoevgrad, Bulgaria Blvd. 1");
-        school.setDirector(directorOpt2.get());
-
-        School school3 = new School();
-        school.setName("Third Language School");
-        school.setAddress("1000 Burgas, Bulgaria Blvd. 1");
-        school.setDirector(directorOpt3.get());
-
-        School school4 = new School();
-        school.setName("Fourth Language School");
-        school.setAddress("1000 Varna, Bulgaria Blvd. 1");
-        school.setDirector(directorOpt4.get());
-
-        schoolRepository.save(school);
+        schoolRepository.saveAll(schoolsToSave);
     }
+
+    private record SchoolInitData(String username, String name, String address) {}
+
 
     @Override
     public List<SchoolDTO> getAllSchoolDTOs() {
