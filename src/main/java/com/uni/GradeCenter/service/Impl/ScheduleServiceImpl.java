@@ -7,7 +7,9 @@ import com.uni.GradeCenter.model.Teacher;
 import com.uni.GradeCenter.repository.ClassroomRepository;
 import com.uni.GradeCenter.repository.ScheduleRepository;
 import com.uni.GradeCenter.repository.TeacherRepository;
+import com.uni.GradeCenter.service.ClassroomService;
 import com.uni.GradeCenter.service.ScheduleService;
+import com.uni.GradeCenter.service.TeacherService;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -18,13 +20,13 @@ import java.util.List;
 public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final TeacherRepository teacherRepository;
-    private final ClassroomRepository classroomRepository;
+    private final TeacherService teacherService;
+    private final ClassroomService classroomService;
 
-    public ScheduleServiceImpl(ScheduleRepository scheduleRepository, TeacherRepository teacherRepository, ClassroomRepository classroomRepository) {
+    public ScheduleServiceImpl(ScheduleRepository scheduleRepository, TeacherService teacherService, ClassroomService classroomService) {
         this.scheduleRepository = scheduleRepository;
-        this.teacherRepository = teacherRepository;
-        this.classroomRepository = classroomRepository;
+        this.teacherService = teacherService;
+        this.classroomService = classroomService;
     }
 
     @Override
@@ -58,12 +60,12 @@ public class ScheduleServiceImpl implements ScheduleService {
         if (scheduleRepository.count() > 0) return;
 
         // Вземи учител
-        Teacher teacher = teacherRepository.findAll().stream()
+        Teacher teacher = teacherService.getAllTeachers().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No teacher found."));
 
         // Вземи класна стая
-        Classroom classroom = classroomRepository.findAll().stream()
+        Classroom classroom = classroomService.getAllClassrooms().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No classroom found."));
 

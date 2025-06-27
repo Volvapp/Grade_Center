@@ -18,4 +18,6 @@ public interface SubjectService {
     List<Subject> getAllSubjectsByIds(List<Long> ids);
 
     void initializeSubjects();
+
+    List<Subject> findAll();
 }

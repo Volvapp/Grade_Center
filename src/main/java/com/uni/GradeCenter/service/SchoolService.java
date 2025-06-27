@@ -3,7 +3,9 @@ package com.uni.GradeCenter.service;
 import com.uni.GradeCenter.model.School;
 import com.uni.GradeCenter.model.dto.SchoolDTO;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface SchoolService {
     School createSchool(School school);
@@ -21,4 +23,8 @@ public interface SchoolService {
     List<SchoolDTO> getAllSchoolDTOs();
 
     void saveSchool(School school);
+
+    Optional<School> findFirst();
+
+    Optional<School> findBySchoolName(String firstLanguageSchool);
 }

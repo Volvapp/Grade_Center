@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -46,6 +47,11 @@ public class UserServiceImpl implements UserService {
         User currentUser = this.userRepository.findById(user.getId()).orElseThrow();
 
         return this.userRepository.save(currentUser);
+    }
+
+    @Override
+    public Optional<User> findByRole(Role role) {
+        return userRepository.findByRole(role);
     }
 
     @Override
@@ -85,12 +91,66 @@ public class UserServiceImpl implements UserService {
                 Role.DIRECTOR
         );
 
+        User director2 = new User(
+                "director2",
+                passwordEncoder.encode("1234"),
+                "Zlatko",
+                "Director",
+                "director2@example.com",
+                Role.DIRECTOR
+        );
+
+        User director3 = new User(
+                "director3",
+                passwordEncoder.encode("1234"),
+                "Guliver",
+                "Director",
+                "director3@example.com",
+                Role.DIRECTOR
+        );
+
+        User director4 = new User(
+                "director4",
+                passwordEncoder.encode("1234"),
+                "Yonko",
+                "Director",
+                "director4@example.com",
+                Role.DIRECTOR
+        );
+
         User teacher = new User(
                 "teacher",
                 passwordEncoder.encode("1234"),
                 "Tom",
                 "Teacher",
                 "teacher@example.com",
+                Role.TEACHER
+        );
+
+        User teacher2 = new User(
+                "teacher2",
+                passwordEncoder.encode("1234"),
+                "Zeus",
+                "Teacher",
+                "teacher2@example.com",
+                Role.TEACHER
+        );
+
+        User teacher3 = new User(
+                "teacher3",
+                passwordEncoder.encode("1234"),
+                "Loki",
+                "Teacher",
+                "teacher3@example.com",
+                Role.TEACHER
+        );
+
+        User teacher4 = new User(
+                "teacher4",
+                passwordEncoder.encode("1234"),
+                "Aristotel",
+                "Teacher",
+                "teacher4@example.com",
                 Role.TEACHER
         );
 
@@ -103,12 +163,66 @@ public class UserServiceImpl implements UserService {
                 Role.STUDENT
         );
 
+        User student2 = new User(
+                "student2",
+                passwordEncoder.encode("1234"),
+                "Yosif",
+                "Student",
+                "student2@example.com",
+                Role.STUDENT
+        );
+
+        User student3 = new User(
+                "student3",
+                passwordEncoder.encode("1234"),
+                "Goril",
+                "Student",
+                "student3@example.com",
+                Role.STUDENT
+        );
+
+        User student4 = new User(
+                "student4",
+                passwordEncoder.encode("1234"),
+                "Ivaila",
+                "Student",
+                "student4@example.com",
+                Role.STUDENT
+        );
+
         User parent = new User(
                 "parent",
                 passwordEncoder.encode("1234"),
                 "Peter",
                 "Parent",
                 "parent@example.com",
+                Role.PARENT
+        );
+
+        User parent2 = new User(
+                "parent2",
+                passwordEncoder.encode("1234"),
+                "Dragan",
+                "Parent",
+                "parent2@example.com",
+                Role.PARENT
+        );
+
+        User parent3 = new User(
+                "parent3",
+                passwordEncoder.encode("1234"),
+                "Igor",
+                "Parent",
+                "parent3@example.com",
+                Role.PARENT
+        );
+
+        User parent4 = new User(
+                "parent4",
+                passwordEncoder.encode("1234"),
+                "Oliver",
+                "Parent",
+                "parent4@example.com",
                 Role.PARENT
         );
 
@@ -204,5 +318,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getUsersByRole(Role role) {
         return this.userRepository.findAllByRole(role);
+    }
+
+    @Override
+    public Optional<User> findByRoleAndUsername(Role role, String director) {
+        return userRepository.findByRoleAndUsername(role, director);
     }
 }

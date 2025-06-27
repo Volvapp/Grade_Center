@@ -6,6 +6,7 @@ import com.uni.GradeCenter.model.dto.UserDTO;
 import com.uni.GradeCenter.model.enums.Role;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     User createUser(User user);
@@ -13,6 +14,8 @@ public interface UserService {
     User getUserById(Long id);
 
     User updateUser(User user);
+
+    Optional<User> findByRole(Role role);
 
     void deleteUserById(Long id);
 
@@ -26,4 +29,5 @@ public interface UserService {
 
     List<User> getUsersByRole(Role role);
 
+    Optional<User> findByRoleAndUsername(Role role, String director);
 }

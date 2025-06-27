@@ -3,7 +3,7 @@ package com.uni.GradeCenter.service.Impl;
 import com.uni.GradeCenter.model.*;
 import com.uni.GradeCenter.model.enums.Role;
 import com.uni.GradeCenter.repository.*;
-import com.uni.GradeCenter.service.StudentService;
+import com.uni.GradeCenter.service.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,17 +12,17 @@ import java.util.List;
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
-    private final UserRepository userRepository;
-    private final SchoolRepository schoolRepository;
-    private final ParentRepository parentRepository;
-    private final ClassroomRepository classroomRepository;
+    private final UserService userService;
+    private final SchoolService schoolService;
+    private final ClassroomService classroomService;
+    private final ParentService parentService;
 
-    public StudentServiceImpl(StudentRepository studentRepository, UserRepository userRepository, SchoolRepository schoolRepository, ParentRepository parentRepository, ClassroomRepository classroomRepository) {
+    public StudentServiceImpl(StudentRepository studentRepository, UserService userService, SchoolService schoolService, ClassroomService classroomService, ParentService parentService) {
         this.studentRepository = studentRepository;
-        this.userRepository = userRepository;
-        this.schoolRepository = schoolRepository;
-        this.parentRepository = parentRepository;
-        this.classroomRepository = classroomRepository;
+        this.userService = userService;
+        this.schoolService = schoolService;
+        this.classroomService = classroomService;
+        this.parentService = parentService;
     }
 
     @Override
@@ -56,16 +56,16 @@ public class StudentServiceImpl implements StudentService {
         if (studentRepository.count() > 0) return;
 
         // Вземи ученическия User
-        User studentUser = userRepository.findByRole(Role.STUDENT)
+        User studentUser = userService.findByRole(Role.STUDENT)
                 .orElseThrow(() -> new IllegalStateException("No user with role STUDENT found."));
 
         // Вземи училище
-        School school = schoolRepository.findAll().stream()
+        School school = schoolService.getAllSchools().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No school found."));
 
         // Вземи клас
-        Classroom classroom = classroomRepository.findAll().stream()
+        Classroom classroom = classroomService.findAll().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No classroom found."));
 
@@ -79,7 +79,7 @@ public class StudentServiceImpl implements StudentService {
         Student savedStudent = studentRepository.save(student);
 
         // Вземи родителския User
-        User parentUser = userRepository.findByRole(Role.PARENT)
+        User parentUser = userService.findByRole(Role.PARENT)
                 .orElseThrow(() -> new IllegalStateException("No user with role PARENT found."));
 
         // Създай родител и го свържи със студента
@@ -91,7 +91,7 @@ public class StudentServiceImpl implements StudentService {
         savedStudent.setParent(parent);
 
         // Запиши и двата (студентът вече е записан, сега само обновяваме)
-        parentRepository.save(parent);
+        parentService.createParent(parent);
         studentRepository.save(savedStudent); // обновен със setParent
     }
 
@@ -113,10 +113,10 @@ public class StudentServiceImpl implements StudentService {
         user.setLastName(lastName);
         user.setEmail(email);
         user.setUsername(username);
-        userRepository.save(user);
+        userService.createUser(user);
 
-        student.setSchool(schoolRepository.findById(schoolId).orElse(null));
-        student.setClassroom(classroomRepository.findById(classroomId).orElse(null));
+        student.setSchool(schoolService.getSchoolById(schoolId));
+        student.setClassroom(classroomService.getClassroomById(classroomId));
         studentRepository.save(student);
     }
 

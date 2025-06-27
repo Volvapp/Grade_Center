@@ -7,9 +7,11 @@ import com.uni.GradeCenter.model.enums.Role;
 import com.uni.GradeCenter.repository.SchoolRepository;
 import com.uni.GradeCenter.repository.UserRepository;
 import com.uni.GradeCenter.service.SchoolService;
+import com.uni.GradeCenter.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,12 +21,12 @@ public class SchoolServiceImpl implements SchoolService {
 
     private final SchoolRepository schoolRepository;
     private final ModelMapper modelMapper;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public SchoolServiceImpl(SchoolRepository schoolRepository, ModelMapper modelMapper, UserRepository userRepository) {
+    public SchoolServiceImpl(SchoolRepository schoolRepository, ModelMapper modelMapper, UserService userService) {
         this.schoolRepository = schoolRepository;
         this.modelMapper = modelMapper;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -58,9 +60,15 @@ public class SchoolServiceImpl implements SchoolService {
         if (schoolRepository.count() > 0) return;
 
         // Намери директор
-        Optional<User> directorOpt = userRepository.findByRole(Role.DIRECTOR);
+        Optional<User> directorOpt = userService.findByRoleAndUsername(Role.DIRECTOR, "director");
 
-        if (directorOpt.isEmpty()) {
+        Optional<User> directorOpt2 = userService.findByRoleAndUsername(Role.DIRECTOR, "director2");
+
+        Optional<User> directorOpt3 = userService.findByRoleAndUsername(Role.DIRECTOR, "director3");
+
+        Optional<User> directorOpt4 = userService.findByRoleAndUsername(Role.DIRECTOR, "director4");
+
+        if (directorOpt.isEmpty() && directorOpt2.isEmpty() && directorOpt3.isEmpty() && directorOpt4.isEmpty()) {
             throw new IllegalStateException("No user with role DIRECTOR found!");
         }
 
@@ -70,6 +78,21 @@ public class SchoolServiceImpl implements SchoolService {
         school.setName("First Language School");
         school.setAddress("1000 Sofia, Bulgaria Blvd. 1");
         school.setDirector(director);
+
+        School school2 = new School();
+        school.setName("Second Language School");
+        school.setAddress("1000 Blagoevgrad, Bulgaria Blvd. 1");
+        school.setDirector(directorOpt2.get());
+
+        School school3 = new School();
+        school.setName("Third Language School");
+        school.setAddress("1000 Burgas, Bulgaria Blvd. 1");
+        school.setDirector(directorOpt3.get());
+
+        School school4 = new School();
+        school.setName("Fourth Language School");
+        school.setAddress("1000 Varna, Bulgaria Blvd. 1");
+        school.setDirector(directorOpt4.get());
 
         schoolRepository.save(school);
     }
@@ -86,6 +109,16 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     public void saveSchool(School school) {
         schoolRepository.save(school);
+    }
+
+    @Override
+    public Optional<School> findFirst() {
+        return schoolRepository.findAll().stream().findFirst();
+    }
+
+    @Override
+    public Optional<School> findBySchoolName(String firstLanguageSchool) {
+        return schoolRepository.findByName(firstLanguageSchool);
     }
 
     private SchoolDTO convertToDTO(School school) {

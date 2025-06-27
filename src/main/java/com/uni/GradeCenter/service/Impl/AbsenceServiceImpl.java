@@ -8,6 +8,8 @@ import com.uni.GradeCenter.repository.AbsenceRepository;
 import com.uni.GradeCenter.repository.StudentRepository;
 import com.uni.GradeCenter.repository.TeacherRepository;
 import com.uni.GradeCenter.service.AbsenceService;
+import com.uni.GradeCenter.service.StudentService;
+import com.uni.GradeCenter.service.TeacherService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,13 +19,13 @@ import java.util.List;
 public class AbsenceServiceImpl implements AbsenceService {
 
     private final AbsenceRepository absenceRepository;
-    private final StudentRepository studentRepository;
-    private final TeacherRepository teacherRepository;
+    private final StudentService studentService;
+    private final TeacherService teacherService;
 
-    public AbsenceServiceImpl(AbsenceRepository absenceRepository, StudentRepository studentRepository, TeacherRepository teacherRepository) {
+    public AbsenceServiceImpl(AbsenceRepository absenceRepository, StudentService studentService, TeacherService teacherService) {
         this.absenceRepository = absenceRepository;
-        this.studentRepository = studentRepository;
-        this.teacherRepository = teacherRepository;
+        this.studentService = studentService;
+        this.teacherService = teacherService;
     }
 
     @Override
@@ -57,12 +59,12 @@ public class AbsenceServiceImpl implements AbsenceService {
         if (absenceRepository.count() > 0) return;
 
         // Вземи студент
-        Student student = studentRepository.findAll().stream()
+        Student student = studentService.getAllStudents().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No student found."));
 
         // Вземи учител и предмет
-        Teacher teacher = teacherRepository.findAll().stream()
+        Teacher teacher = teacherService.getAllTeachers().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No teacher found."));
 

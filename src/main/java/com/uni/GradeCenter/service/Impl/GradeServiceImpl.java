@@ -8,6 +8,8 @@ import com.uni.GradeCenter.repository.GradeRepository;
 import com.uni.GradeCenter.repository.StudentRepository;
 import com.uni.GradeCenter.repository.TeacherRepository;
 import com.uni.GradeCenter.service.GradeService;
+import com.uni.GradeCenter.service.StudentService;
+import com.uni.GradeCenter.service.TeacherService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,13 +19,13 @@ import java.util.List;
 public class GradeServiceImpl implements GradeService {
 
     private final GradeRepository gradeRepository;
-    private final StudentRepository studentRepository;
-    private final TeacherRepository teacherRepository;
+    private final StudentService studentService;
+    private final TeacherService teacherService;
 
-    public GradeServiceImpl(GradeRepository gradeRepository, StudentRepository studentRepository, TeacherRepository teacherRepository) {
+    public GradeServiceImpl(GradeRepository gradeRepository, StudentService studentService, TeacherService teacherService) {
         this.gradeRepository = gradeRepository;
-        this.studentRepository = studentRepository;
-        this.teacherRepository = teacherRepository;
+        this.studentService = studentService;
+        this.teacherService = teacherService;
     }
 
     @Override
@@ -57,12 +59,12 @@ public class GradeServiceImpl implements GradeService {
         if (gradeRepository.count() > 0) return;
 
         // Вземи студент
-        Student student = studentRepository.findAll().stream()
+        Student student = studentService.getAllStudents().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No student found."));
 
         // Вземи учител и един негов предмет
-        Teacher teacher = teacherRepository.findAll().stream()
+        Teacher teacher = teacherService.getAllTeachers().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No teacher found."));
 

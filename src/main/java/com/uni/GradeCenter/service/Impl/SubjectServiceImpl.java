@@ -4,6 +4,7 @@ import com.uni.GradeCenter.model.School;
 import com.uni.GradeCenter.model.Subject;
 import com.uni.GradeCenter.repository.SchoolRepository;
 import com.uni.GradeCenter.repository.SubjectRepository;
+import com.uni.GradeCenter.service.SchoolService;
 import com.uni.GradeCenter.service.SubjectService;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +16,11 @@ public class SubjectServiceImpl implements SubjectService {
 
     private final SubjectRepository subjectRepository;
 
-    private final SchoolRepository schoolRepository;
+    private final SchoolService schoolService;
 
-    public SubjectServiceImpl(SubjectRepository subjectRepository, SchoolRepository schoolRepository) {
+    public SubjectServiceImpl(SubjectRepository subjectRepository, SchoolService schoolService) {
         this.subjectRepository = subjectRepository;
-        this.schoolRepository = schoolRepository;
+        this.schoolService = schoolService;
     }
 
     @Override
@@ -58,7 +59,10 @@ public class SubjectServiceImpl implements SubjectService {
     public void initializeSubjects() {
         if (subjectRepository.count() > 0) return;
 
-        Optional<School> schoolOpt = schoolRepository.findAll().stream().findFirst();
+        Optional<School> schoolOpt = schoolService.findBySchoolName("First Language School");
+        Optional<School> schoolOpt2 = schoolService.findBySchoolName("Second Language School");
+        Optional<School> schoolOpt3 = schoolService.findBySchoolName("Third Language School");
+        Optional<School> schoolOpt4 = schoolService.findBySchoolName("Fourth Language School");
 
         if (schoolOpt.isEmpty()) {
             throw new IllegalStateException("No schools found! Cannot create subjects without a school.");
@@ -71,6 +75,26 @@ public class SubjectServiceImpl implements SubjectService {
         Subject biology = new Subject("Biology", school);
         Subject english = new Subject("English", school);
 
-        subjectRepository.saveAll(List.of(math, history, biology, english));
+        Subject math2 = new Subject("Mathematics", schoolOpt2.get());
+        Subject history2 = new Subject("History", schoolOpt2.get());
+        Subject biology2 = new Subject("Biology", schoolOpt2.get());
+        Subject english2 = new Subject("English", schoolOpt2.get());
+
+        Subject math3 = new Subject("Mathematics", schoolOpt3.get());
+        Subject history3 = new Subject("History", schoolOpt3.get());
+        Subject biology3 = new Subject("Biology", schoolOpt3.get());
+        Subject english3 = new Subject("English", schoolOpt3.get());
+
+        Subject math4 = new Subject("Mathematics", schoolOpt4.get());
+        Subject history4 = new Subject("History", schoolOpt4.get());
+        Subject biology4 = new Subject("Biology", schoolOpt4.get());
+        Subject english4 = new Subject("English", schoolOpt4.get());
+
+        subjectRepository.saveAll(List.of(math, history, biology, english, math2, history2, biology2, english2, math3, history3, biology3, english3, math4, history4, biology4, english4));
+    }
+
+    @Override
+    public List<Subject> findAll() {
+        return subjectRepository.findAll();
     }
 }
