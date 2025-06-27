@@ -23,6 +23,7 @@ public class Schedule extends BaseEntity{
     private Subject subject;
 
     @ManyToOne
+    @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
     public Schedule(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, Classroom classroom, Subject subject, Teacher teacher) {

@@ -18,4 +18,6 @@ public interface TeacherService {
     List<Teacher> getTeachersByIds(List<Long> teacherIds);
 
     void deleteByUserId(Long id);
+
+    Teacher getTeacherByUserId(Long id);
 }

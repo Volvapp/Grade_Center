@@ -1,20 +1,15 @@
 package com.uni.GradeCenter.service.Impl;
 
-import com.uni.GradeCenter.model.Parent;
-import com.uni.GradeCenter.model.Student;
-import com.uni.GradeCenter.model.Teacher;
-import com.uni.GradeCenter.model.User;
+import com.uni.GradeCenter.model.*;
 import com.uni.GradeCenter.model.dto.UserDTO;
 import com.uni.GradeCenter.model.enums.Role;
 import com.uni.GradeCenter.repository.UserRepository;
-import com.uni.GradeCenter.service.ParentService;
-import com.uni.GradeCenter.service.StudentService;
-import com.uni.GradeCenter.service.TeacherService;
-import com.uni.GradeCenter.service.UserService;
+import com.uni.GradeCenter.service.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,13 +19,15 @@ public class UserServiceImpl implements UserService {
     private final TeacherService teacherService;
     private final StudentService studentService;
     private final ParentService parentService;
+    private final AbsenceService absenceService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, TeacherService teacherService, StudentService studentService, ParentService parentService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, TeacherService teacherService, StudentService studentService, ParentService parentService, AbsenceService absenceService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.teacherService = teacherService;
         this.studentService = studentService;
         this.parentService = parentService;
+        this.absenceService = absenceService;
     }
 
     @Override
@@ -125,54 +122,84 @@ public class UserServiceImpl implements UserService {
 
         Role oldRole = user.getRole();
 
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setEmail(userDTO.getEmail());
+        updateBasicUserInfo(user, userDTO);
 
         if (userDTO.getRole() != null && userDTO.getRole() != oldRole) {
-
-            switch (oldRole) {
-                case STUDENT:
-                    Student studentByUserId = studentService.getStudentByUserId(id);
-                    Parent parent = studentByUserId.getParent();
-                    if (parent != null) {
-                        parent.setChild(null);
-                        this.parentService.updateParent(parent);
-                    }
-                    studentService.deleteByUserId(user.getId());
-                    break;
-                case TEACHER:
-                    teacherService.deleteByUserId(user.getId());
-                    break;
-                case PARENT:
-                    //todo shte trqbva da se napravi za vsqka rolq :))))))))))
-                    parentService.deleteByUserId(user.getId());
-                    break;
-            }
-
-            switch (userDTO.getRole()) {
-                case STUDENT:
-                    Student student = new Student();
-                    student.setUser(user);
-                    studentService.createStudent(student);
-                    break;
-                case TEACHER:
-                    Teacher teacher = new Teacher();
-                    teacher.setUser(user);
-                    teacherService.createTeacher(teacher);
-                    break;
-                case PARENT:
-                    Parent parent = new Parent();
-                    parent.setUser(user);
-                    parentService.createParent(parent);
-                    break;
-            }
-
+            removeOldRoleRelations(id, oldRole);
+            assignNewRole(user, userDTO.getRole());
             user.setRole(userDTO.getRole());
         }
 
         userRepository.save(user);
     }
+
+    private void updateBasicUserInfo(User user, UserDTO userDTO) {
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+    }
+
+    private void removeOldRoleRelations(Long userId, Role oldRole) {
+        switch (oldRole) {
+            case STUDENT -> removeStudentRelations(userId);
+            case TEACHER -> removeTeacherRelations(userId);
+            case PARENT -> parentService.deleteByUserId(userId);
+        }
+    }
+
+    private void removeStudentRelations(Long userId) {
+        Student student = studentService.getStudentByUserId(userId);
+        if (student.getParent() != null) {
+            Parent parent = student.getParent();
+            parent.setChild(null);
+            parentService.updateParent(parent);
+        }
+        studentService.deleteByUserId(userId);
+    }
+
+    private void removeTeacherRelations(Long userId) {
+        Teacher teacher = teacherService.getTeacherByUserId(userId);
+
+        if (teacher.getSchool() != null) {
+            School school = teacher.getSchool();
+            teacher.setSchool(null);
+            school.getTeachers().remove(teacher);
+        }
+
+        teacher.getSchedules().forEach(schedule -> schedule.setTeacher(null));
+        teacher.getSchedules().clear();
+
+        teacher.getGrades().forEach(grade -> grade.setTeacher(null));
+        teacher.getGrades().clear();
+
+        absenceService.getAllAbsences().stream()
+                .filter(absence -> absence.getTeacher() == teacher)
+                .forEach(absence -> absence.setTeacher(null));
+
+        teacherService.updateTeacher(teacher);
+        teacherService.deleteByUserId(userId);
+    }
+
+    private void assignNewRole(User user, Role newRole) {
+        switch (newRole) {
+            case STUDENT -> {
+                Student student = new Student();
+                student.setUser(user);
+                studentService.createStudent(student);
+            }
+            case TEACHER -> {
+                Teacher teacher = new Teacher();
+                teacher.setUser(user);
+                teacherService.createTeacher(teacher);
+            }
+            case PARENT -> {
+                Parent parent = new Parent();
+                parent.setUser(user);
+                parentService.createParent(parent);
+            }
+        }
+    }
+
 
     @Override
     public List<User> getUsersByRole(Role role) {

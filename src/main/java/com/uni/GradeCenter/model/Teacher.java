@@ -21,7 +21,7 @@ public class Teacher extends BaseEntity {
     @OneToMany(mappedBy = "teacher")
     private List<Grade> grades;
 
-    @OneToMany
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules;
 
     public Teacher(User user, School school) {

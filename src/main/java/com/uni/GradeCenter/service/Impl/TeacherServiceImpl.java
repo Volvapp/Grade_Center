@@ -35,7 +35,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Teacher getTeacherById(Long id) {
-        return this.teacherRepository.findById(id).orElseThrow();
+        return teacherRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Teacher not found with id: " + id));
     }
 
     @Override
@@ -84,5 +85,10 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public void deleteByUserId(Long id) {
         this.teacherRepository.deleteByUserId(id);
+    }
+
+    @Override
+    public Teacher getTeacherByUserId(Long id) {
+        return this.teacherRepository.findByUser_Id(id);
     }
 }
