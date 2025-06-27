@@ -229,6 +229,25 @@
                 padding-bottom: 12px;
             }
         }
+        .create-button {
+            background-color: #66bb6a;
+            border: none;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
+        }
+
+        .create-button:hover {
+            background-color: #4caf50;
+            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+        }
+
     </style>
 </head>
 <body>
@@ -247,9 +266,14 @@
 <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
 
 <div style="width: 100%; max-width: 1200px; display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-    <a href="/admin/schools/create">
-        <button>Създай училище</button>
+    <a href="/admin/schools/classrooms/create">
+        <button class="create-button">Създай класна стая</button>
     </a>
+    <a href="/admin/schools/create">
+        <button class="create-button">Създай училище</button>
+    </a>
+
+
 </div>
 
 <div class="table-container">

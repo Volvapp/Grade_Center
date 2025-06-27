@@ -21,4 +21,6 @@ public interface ClassroomService {
     List<Classroom> getClassroomsByIds(List<Long> classroomIds);
 
     Collection<Classroom> findAll();
+
+    List<Classroom> findClassroomsBySchoolId(Long schoolId);
 }

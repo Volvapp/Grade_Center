@@ -104,4 +104,9 @@ public class ClassroomServiceImpl implements ClassroomService {
     public Collection<Classroom> findAll() {
         return classroomRepository.findAll();
     }
+
+    @Override
+    public List<Classroom> findClassroomsBySchoolId(Long schoolId) {
+        return this.schoolService.getSchoolById(schoolId).getClassrooms();
+    }
 }

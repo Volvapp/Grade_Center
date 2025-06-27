@@ -1,6 +1,7 @@
 package com.uni.GradeCenter.controller;
 
 import com.uni.GradeCenter.model.*;
+import com.uni.GradeCenter.model.dto.ClassroomDTO;
 import com.uni.GradeCenter.model.dto.ParentDTO;
 import com.uni.GradeCenter.model.dto.UserDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateSchoolBindingDTO;
@@ -244,5 +245,11 @@ public class AdminController {
         return "redirect:/admin/teachers";
     }
 
+    @GetMapping("schools/classrooms/create")
+    public String createClassroomForm(Model model) {
+        model.addAttribute("classroomDTO", new ClassroomDTO());
+
+        return "admin-schools-classroom-create";
+    }
 
 }

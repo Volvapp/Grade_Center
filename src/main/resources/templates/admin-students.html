@@ -304,9 +304,12 @@
                     <option th:each="classroom : ${classrooms}"
                             th:value="${classroom.id}"
                             th:text="${classroom.name}"
+                            th:if="${student.school != null and classroom.school != null and classroom.school.id == student.school.id}"
                             th:selected="${student.classroom != null and student.classroom.id == classroom.id}">
                     </option>
                 </select>
+
+
             </td>
             <td data-label="Действия">
                 <button type="submit" class="btn-edit" aria-label="Запази промените">Запази</button>

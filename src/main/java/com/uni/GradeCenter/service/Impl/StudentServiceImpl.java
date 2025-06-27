@@ -105,16 +105,31 @@ public class StudentServiceImpl implements StudentService {
     public void updateStudentInline(Long id, String firstName, String lastName, String email, String username, Long schoolId, Long classroomId) {
         Student student = studentRepository.findById(id).orElseThrow();
         User user = student.getUser();
+
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
         user.setUsername(username);
-        userService.createUser(user);
+        userService.updateUser(user);
 
         student.setSchool(schoolService.getSchoolById(schoolId));
-        student.setClassroom(classroomService.getClassroomById(classroomId));
+
+        Classroom newClassroom = classroomService.getClassroomById(classroomId);
+        Classroom oldClassroom = student.getClassroom();
+
+        if (oldClassroom != null) {
+            oldClassroom.getStudents().remove(student);
+        }
+
+        student.setClassroom(newClassroom);
+
+        if (newClassroom != null && !newClassroom.getStudents().contains(student)) {
+            newClassroom.getStudents().add(student);
+        }
+
         studentRepository.save(student);
     }
+
 
     @Override
     public void deleteByUserId(Long id) {
