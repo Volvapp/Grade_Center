@@ -1,6 +1,7 @@
 package com.uni.GradeCenter.service;
 
 import com.uni.GradeCenter.model.Classroom;
+import com.uni.GradeCenter.model.dto.viewDTOs.ClassroomViewDTO;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,4 +24,6 @@ public interface ClassroomService {
     Collection<Classroom> findAll();
 
     List<Classroom> findClassroomsBySchoolId(Long schoolId);
+
+    List<ClassroomViewDTO> getAllClassroomViewDTOs();
 }

@@ -1,5 +1,6 @@
 package com.uni.GradeCenter.service;
 
+import com.uni.GradeCenter.model.School;
 import com.uni.GradeCenter.model.Subject;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface SubjectService {
     List<Subject> findAll();
 
     List<Subject> getAllSubjectsBySchoolId(Long id);
+
+    List<Subject> getSubjectsBySchool(School school);
 }

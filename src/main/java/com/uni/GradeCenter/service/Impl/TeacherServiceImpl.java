@@ -46,8 +46,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Teacher updateTeacher(Teacher teacher) {
-        Teacher currentTeacher = this.teacherRepository.findById(teacher.getId()).orElseThrow();
-        return this.teacherRepository.save(currentTeacher);
+        return this.teacherRepository.save(teacher);
     }
 
     @Override

@@ -2,10 +2,11 @@ package com.uni.GradeCenter.controller;
 
 import com.uni.GradeCenter.model.*;
 import com.uni.GradeCenter.model.dto.ClassroomDTO;
-import com.uni.GradeCenter.model.dto.ParentDTO;
 import com.uni.GradeCenter.model.dto.UserDTO;
+import com.uni.GradeCenter.model.dto.bindingDTOs.CreateScheduleBindingDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateSchoolBindingDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateSubjectBindingDTO;
+import com.uni.GradeCenter.model.dto.viewDTOs.ClassroomViewDTO;
 import com.uni.GradeCenter.model.enums.Role;
 import com.uni.GradeCenter.service.*;
 import jakarta.validation.Valid;
@@ -16,6 +17,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -335,5 +338,68 @@ public class AdminController {
         redirectAttributes.addFlashAttribute("successMessage", "Предметът беше създаден успешно!");
         return "redirect:/admin/schools";
     }
+
+    @GetMapping("/schedules")
+    public String schedules(Model model) {
+        List<ClassroomViewDTO> classrooms = classroomService.getAllClassroomViewDTOs();
+
+        model.addAttribute("classroomViews", classrooms);
+
+        return "admin-create-schedules";
+    }
+
+    @GetMapping("/schedules/available-times")
+    @ResponseBody
+    public List<LocalTime> getAvailableTimes(@RequestParam Long classroomId,
+                                             @RequestParam Long subjectId,
+                                             @RequestParam DayOfWeek dayOfWeek) {
+
+        Classroom classroom = classroomService.getClassroomById(classroomId);
+        Subject subject = subjectService.getSubjectById(subjectId);
+
+        List<LocalTime> availableStartTimes = scheduleService.getAvailableStartTimes(classroom, subject, dayOfWeek);
+
+        return availableStartTimes;
+    }
+
+    @GetMapping("/schedules/create")
+    public String schedulesCreate(@RequestParam("classroomId") Long classroomId, Model model) {
+        Classroom classroom = classroomService.getClassroomById(classroomId);
+
+        List<Subject> subjects = subjectService.getSubjectsBySchool(classroom.getSchool());
+        //List<LocalTime> availableStartTimes = scheduleService.getAvailableStartTimesForClassroom(classroom);
+        List<LocalTime> dailyLessonSlots = scheduleService.getDailyLessonSlots();
+
+        CreateScheduleBindingDTO dto = new CreateScheduleBindingDTO();
+        dto.setClassroomId(classroomId);
+
+        model.addAttribute("classroom", classroom);
+        model.addAttribute("subjects", subjects);
+        model.addAttribute("availableStartTimes", dailyLessonSlots);
+        model.addAttribute("createScheduleBindingDTO", dto);
+
+        return "admin-create-schedule";
+    }
+
+    @PostMapping("/schedules/create")
+    public String createSchedule(@ModelAttribute("createScheduleBindingDTO") CreateScheduleBindingDTO createScheduleBindingDTO,
+                                 BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        try {
+            if (bindingResult.hasErrors()) {
+                redirectAttributes.addFlashAttribute("createScheduleBindingDTO", createScheduleBindingDTO);
+                redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.createScheduleBindingDTO", bindingResult);
+                return "redirect:/admin/schedules/create?classroomId=" + createScheduleBindingDTO.getClassroomId();
+            }
+
+            scheduleService.createScheduleFrontend(createScheduleBindingDTO);
+
+            redirectAttributes.addFlashAttribute("successMessage", "Часът беше успешно създаден.");
+            return "redirect:/admin/schedules";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Възникна грешка при създаването на часа.");
+            return "redirect:/admin/schedules/create?classroomId=" + createScheduleBindingDTO.getClassroomId();
+        }
+    }
+
 
 }

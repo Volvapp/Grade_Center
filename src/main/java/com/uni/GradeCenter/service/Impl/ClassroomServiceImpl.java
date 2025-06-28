@@ -2,6 +2,7 @@ package com.uni.GradeCenter.service.Impl;
 
 import com.uni.GradeCenter.model.Classroom;
 import com.uni.GradeCenter.model.School;
+import com.uni.GradeCenter.model.dto.viewDTOs.ClassroomViewDTO;
 import com.uni.GradeCenter.repository.ClassroomRepository;
 import com.uni.GradeCenter.repository.SchoolRepository;
 import com.uni.GradeCenter.service.ClassroomService;
@@ -40,8 +41,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public Classroom updateClassroom(Classroom classroom) {
-        Classroom existingClassroom = getClassroomById(classroom.getId());
-        return classroomRepository.save(existingClassroom);
+        return classroomRepository.save(classroom);
     }
 
     @Override
@@ -108,5 +108,24 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public List<Classroom> findClassroomsBySchoolId(Long schoolId) {
         return this.schoolService.getSchoolById(schoolId).getClassrooms();
+    }
+
+    @Override
+    public List<ClassroomViewDTO> getAllClassroomViewDTOs() {
+        List<Classroom> classroomRepositoryAll = classroomRepository.findAll();
+        List<ClassroomViewDTO> classroomViewDTOs = new ArrayList<>();
+
+        for (Classroom classroom : classroomRepositoryAll) {
+            ClassroomViewDTO classroomViewDTO = new ClassroomViewDTO();
+
+            classroomViewDTO.setClassroomId(classroom.getId());
+            classroomViewDTO.setClassroomName(classroom.getName());
+            classroomViewDTO.setSchoolName(classroom.getSchool().getName());
+            classroomViewDTO.setSchoolDirectorName(classroom.getSchool().getDirector().getFirstName() + " " + classroom.getSchool().getDirector().getLastName());
+
+            classroomViewDTOs.add(classroomViewDTO);
+        }
+
+        return classroomViewDTOs;
     }
 }

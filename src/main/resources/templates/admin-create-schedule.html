@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Създаване на час</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #e8f5e9;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 128, 0, 0.15);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            color: #2e7d32;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #388e3c;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #a5d6a7;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #66bb6a;
+            outline: none;
+        }
+
+        .submit-btn {
+            background-color: #43a047;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #388e3c;
+        }
+
+        .home-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #2e7d32;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .home-link:hover {
+            text-decoration: underline;
+        }
+
+        .field-error {
+            color: #c62828;
+            margin-top: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .bg-danger {
+            background-color: #c62828;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 1.2rem;
+            }
+
+            .submit-btn {
+                font-size: 0.95rem;
+                padding: 0.65rem;
+            }
+
+            input[type="text"],
+            select {
+                font-size: 0.95rem;
+                padding: 0.6rem;
+            }
+
+            .form-container h2 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Създаване на час за клас: <span th:text="${classroom.name}"></span></h2>
+
+    <form th:action="@{/admin/schedules/create}" th:object="${createScheduleBindingDTO}" method="post">
+        <input type="hidden" id="classroomId" th:field="*{classroomId}" th:value="${classroom.id}" />
+
+        <!-- Ден от седмицата -->
+        <div class="form-group">
+            <label for="dayOfWeek">Ден от седмицата</label>
+            <select id="dayOfWeek" name="dayOfWeek" onchange="loadAvailableTimes()" th:field="*{dayOfWeek}" required>
+                <option value="">-- Избери ден --</option>
+                <option value="MONDAY">Понеделник</option>
+                <option value="TUESDAY">Вторник</option>
+                <option value="WEDNESDAY">Сряда</option>
+                <option value="THURSDAY">Четвъртък</option>
+                <option value="FRIDAY">Петък</option>
+            </select>
+            <small th:if="${#fields.hasErrors('dayOfWeek')}" th:errors="*{dayOfWeek}" class="field-error"></small>
+        </div>
+
+        <!-- Предмет -->
+        <div class="form-group">
+            <label for="subjectId">Предмет</label>
+            <select id="subjectId" name="subjectId" onchange="loadAvailableTimes()" th:field="*{subjectId}" required>
+                <option value="">-- Избери предмет --</option>
+                <option th:each="subject : ${subjects}"
+                        th:value="${subject.id}"
+                        th:text="${subject.name}">Предмет</option>
+            </select>
+            <small th:if="${#fields.hasErrors('subjectId')}" th:errors="*{subjectId}" class="field-error"></small>
+        </div>
+
+        <!-- Час от деня (например 08:00 - 08:40) -->
+        <div class="form-group">
+            <label for="startTime">Начален час</label>
+            <select id="startTime" th:field="*{startTime}" required>
+                <option value="">-- Избери час --</option>
+                <option th:each="time : ${availableStartTimes}"
+                        th:value="${time}"
+                        th:text="${time}"></option>
+            </select>
+            <small th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}" class="field-error"></small>
+        </div>
+
+        <button type="submit" class="submit-btn">Създай час</button>
+    </form>
+
+    <a th:href="@{/admin/schools}" class="home-link">⬅ Обратно към училищата</a>
+</div>
+<script>
+    function loadAvailableTimes() {
+        const subjectId = document.getElementById('subjectId').value;
+        const dayOfWeek = document.getElementById('dayOfWeek').value;
+        const classroomId = document.getElementById('classroomId').value;
+
+        if (!subjectId || !dayOfWeek) return;
+
+        fetch(`/admin/schedules/available-times?classroomId=${classroomId}&subjectId=${subjectId}&dayOfWeek=${dayOfWeek}`)
+            .then(res => res.json())
+            .then(times => {
+                const timeSelect = document.getElementById('startTime');
+                timeSelect.innerHTML = '<option value="">-- Избери час --</option>';
+                times.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t;
+                    opt.textContent = t;
+                    timeSelect.appendChild(opt);
+                });
+            })
+            .catch(err => {
+                console.error("Грешка при зареждане на часовете:", err);
+            });
+    }
+</script>
+</body>
+</html>

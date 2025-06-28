@@ -40,8 +40,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     @Override
     public Absence updateAbsence(Absence absence) {
-        Absence existingAbsence = absenceRepository.findById(absence.getId()).orElseThrow();
-        return absenceRepository.save(existingAbsence);
+        return absenceRepository.save(absence);
     }
 
     @Override

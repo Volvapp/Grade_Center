@@ -7,7 +7,7 @@ import java.time.LocalTime;
 
 @Entity
 @Table(name = "schedules")
-public class Schedule extends BaseEntity{
+public class Schedule extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private DayOfWeek dayOfWeek;

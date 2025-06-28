@@ -36,9 +36,7 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject updateSubject(Subject subject) {
-        Subject current = subjectRepository.findById(subject.getId()).orElseThrow();
-        current.setName(subject.getName());
-        return subjectRepository.save(current);
+        return subjectRepository.save(subject);
     }
 
     @Override
@@ -81,7 +79,8 @@ public class SubjectServiceImpl implements SubjectService {
         subjectRepository.saveAll(allSubjects);
     }
 
-    private record SchoolSubjectData(String schoolName, List<String> subjectNames) {}
+    private record SchoolSubjectData(String schoolName, List<String> subjectNames) {
+    }
 
 
     @Override
@@ -92,6 +91,12 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public List<Subject> getAllSubjectsBySchoolId(Long schoolId) {
         return subjectRepository.findBySchool_Id(schoolId);
+    }
+
+    @Override
+    public List<Subject> getSubjectsBySchool(School school) {
+        List<Subject> allBySchool = subjectRepository.findAllBySchool(school);
+        return allBySchool;
     }
 
 }

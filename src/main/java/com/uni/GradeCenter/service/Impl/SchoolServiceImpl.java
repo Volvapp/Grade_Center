@@ -43,8 +43,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     public School updateSchool(School school) {
-        School current = schoolRepository.findById(school.getId()).orElseThrow();
-        return schoolRepository.save(current);
+        return schoolRepository.save(school);
     }
 
     @Override

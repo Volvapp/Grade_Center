@@ -40,8 +40,7 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     public Grade updateGrade(Grade grade) {
-        Grade existing = gradeRepository.findById(grade.getId()).orElseThrow();
-        return gradeRepository.save(existing);
+        return gradeRepository.save(grade);
     }
 
     @Override

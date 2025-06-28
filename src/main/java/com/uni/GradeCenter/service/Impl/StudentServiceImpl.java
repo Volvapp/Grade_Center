@@ -38,8 +38,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student updateStudent(Student student) {
-        Student current = studentRepository.findById(student.getId()).orElseThrow();
-        return studentRepository.save(current);
+        return studentRepository.save(student);
     }
 
     @Override

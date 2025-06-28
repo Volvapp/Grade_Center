@@ -38,8 +38,7 @@ public class ParentServiceImpl implements ParentService {
 
     @Override
     public Parent updateParent(Parent parent) {
-        Parent existing = parentRepository.findById(parent.getId()).orElseThrow();
-        return parentRepository.save(existing);
+        return parentRepository.save(parent);
     }
 
     @Override

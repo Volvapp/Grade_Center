@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="bg" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>Начало | Електронен дневник</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <style>
         /* Основни стилове */
         body {
@@ -23,17 +23,20 @@
             text-align: center;
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
         }
+
         header h1 {
             margin: 0;
             font-size: 2.25rem;
             font-weight: 700;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
+
         header p {
             margin: 0.5rem 0 0;
             font-size: 1.15rem;
             font-weight: 600;
         }
+
         header p span {
             font-weight: 700;
             text-decoration: underline;
@@ -41,8 +44,9 @@
 
         nav {
             background-color: #388e3c;
-            box-shadow: inset 0 -3px 10px rgba(0,0,0,0.15);
+            box-shadow: inset 0 -3px 10px rgba(0, 0, 0, 0.15);
         }
+
         nav ul {
             list-style: none;
             margin: 0;
@@ -52,9 +56,11 @@
             justify-content: center;
             gap: 0.75rem;
         }
+
         nav ul li {
             margin: 0;
         }
+
         .nav-link-button {
             display: inline-block;
             padding: 0.55rem 1.2rem;
@@ -67,15 +73,17 @@
             text-decoration: none;
             font-size: 1rem;
             transition: background-color 0.25s ease, box-shadow 0.25s ease;
-            box-shadow: 0 2px 8px rgba(67,160,71,0.45);
+            box-shadow: 0 2px 8px rgba(67, 160, 71, 0.45);
             user-select: none;
         }
+
         .nav-link-button:hover,
         .nav-link-button:focus {
             background-color: #2e7d32;
-            box-shadow: 0 4px 15px rgba(46,125,50,0.7);
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.7);
             outline: none;
         }
+
         form .nav-link-button {
             font-family: inherit;
             font-size: inherit;
@@ -94,18 +102,21 @@
             padding: 2rem 2.5rem;
             color: #2e7d32;
         }
+
         .role-section h2 {
             font-size: 1.9rem;
             margin-bottom: 1rem;
             font-weight: 700;
-            text-shadow: 0 1px 2px rgba(46,125,50,0.3);
+            text-shadow: 0 1px 2px rgba(46, 125, 50, 0.3);
         }
+
         .role-section ul {
             list-style-type: disc;
             padding-left: 1.25rem;
             font-size: 1.1rem;
             line-height: 1.6;
         }
+
         .role-section ul li {
             margin-bottom: 0.6rem;
         }
@@ -116,7 +127,7 @@
             padding: 1rem 1rem;
             font-size: 0.9rem;
             text-align: center;
-            box-shadow: inset 0 3px 6px rgba(0,0,0,0.07);
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.07);
             font-weight: 600;
             margin-top: auto;
         }
@@ -128,23 +139,29 @@
                 gap: 0.5rem;
                 padding: 0.75rem 0.5rem;
             }
+
             .nav-link-button {
                 padding: 0.5rem 1rem;
                 font-size: 0.95rem;
             }
+
             header h1 {
                 font-size: 1.8rem;
             }
+
             header p {
                 font-size: 1rem;
             }
+
             .container {
                 margin: 1.5rem auto 2rem;
                 padding: 1.25rem 1.25rem;
             }
+
             .role-section h2 {
                 font-size: 1.5rem;
             }
+
             .role-section ul {
                 font-size: 1rem;
             }
@@ -155,6 +172,7 @@
                 flex-direction: column;
                 align-items: center;
             }
+
             .nav-link-button {
                 width: 90%;
                 text-align: center;
@@ -188,6 +206,9 @@
         </li>
         <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
             <a th:href="@{/admin/schools}" class="nav-link-button">Управление на училища</a>
+        </li>
+        <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+            <a th:href="@{/admin/schedules}" class="nav-link-button">Управление на училищни програми</a>
         </li>
         <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
             <a th:href="@{/admin/statistics}" class="nav-link-button">Статистика</a>
