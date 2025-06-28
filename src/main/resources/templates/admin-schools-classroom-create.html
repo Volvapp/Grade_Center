@@ -2,58 +2,104 @@
 <html lang="bg" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Редакция на паралелка</title>
+    <title>Форма за паралелка</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         :root {
             --main-green: #2e7d32;
-            --light-green: #e8f5e9;
+            --light-green: #f1f8f4;
             --hover-green: #256d27;
+            --error-color: #d32f2f;
+            --white: #ffffff;
+            --gray: #ccc;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
+            margin: 0;
+            padding: 0;
             font-family: "Segoe UI", Tahoma, sans-serif;
             background: var(--light-green);
-            color: #1b5e20;
-            padding: 20px;
+            color: var(--main-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
         }
 
         .form-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            background-color: var(--white);
             padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 90%;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h2 {
             text-align: center;
             margin-bottom: 25px;
             color: var(--main-green);
+            font-size: 24px;
         }
 
         label {
-            font-weight: bold;
+            font-weight: 600;
             display: block;
-            margin: 15px 0 5px;
+            margin-bottom: 6px;
+            margin-top: 18px;
         }
 
         input[type="text"],
         input[type="number"],
         select {
             width: 100%;
-            padding: 12px;
-            border: 1.5px solid var(--main-green);
-            border-radius: 8px;
-            background-color: #f1f8f1;
+            padding: 12px 14px;
+            border: 2px solid var(--gray);
+            border-radius: 10px;
+            background-color: #fdfdfd;
             font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .checkbox-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: normal;
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--main-green);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+        }
+
+        .error {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .btn-submit {
+            margin-top: 30px;
+            background-color: var(--main-green);
+            color: white;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--hover-green);
         }
 
         .home-link {
@@ -61,9 +107,8 @@
             text-align: center;
             margin-top: 20px;
             color: var(--main-green);
-            text-decoration: none;
-            font-size: 16px;
             font-weight: 500;
+            text-decoration: none;
             transition: color 0.3s ease;
         }
 
@@ -72,20 +117,18 @@
             text-decoration: underline;
         }
 
-        .btn-submit {
-            margin-top: 25px;
-            background-color: var(--main-green);
-            color: white;
-            padding: 14px;
-            font-size: 16px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
-        }
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 20px;
+            }
 
-        .btn-submit:hover {
-            background-color: var(--hover-green);
+            .form-container {
+                padding: 20px;
+            }
+
+            .btn-submit {
+                font-size: 15px;
+            }
         }
     </style>
 </head>
@@ -94,30 +137,31 @@
 <div class="form-container">
     <h2 th:text="${classroom.name != null} ? 'Редактирай паралелка' : 'Създай паралелка'">Форма</h2>
 
-    <form th:action="@{/admin/schools/classrooms/create}" method="post">
-        <input type="hidden" name="id" th:if="${classroom != null}" th:value="${classroom.id}" />
+    <form th:action="@{/admin/schools/classrooms/create}"
+          th:object="${classroom}" method="post">
 
         <label for="name">Име на паралелката</label>
-        <input type="text" id="name" name="name" th:value="${classroom?.name}" required />
+        <input type="text" id="name" th:field="*{name}" />
+        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></div>
 
         <label for="grade">Клас</label>
-        <input type="number" id="grade" name="grade" min="1" max="12" th:value="${classroom?.grade}" required />
+        <input type="number" id="grade" th:field="*{grade}" min="1" max="12" />
+        <div th:if="${#fields.hasErrors('grade')}" th:errors="*{grade}" class="error"></div>
 
         <label for="school">Училище</label>
-        <select id="school" name="schoolId" required>
+        <select id="school" th:field="*{schoolId}">
             <option value="">-- Избери училище --</option>
             <option th:each="school : ${schools}"
                     th:value="${school.id}"
-                    th:text="${school.name}"
-                    th:selected="${classroom != null and classroom.schoolId == school.id}">
+                    th:text="${school.name}">
             </option>
         </select>
+        <div th:if="${#fields.hasErrors('schoolId')}" th:errors="*{schoolId}" class="error"></div>
 
         <button type="submit" class="btn-submit">Запази</button>
     </form>
 
     <a th:href="@{/admin/schools}" class="home-link">⬅ Обратно към училищата</a>
-
 </div>
 
 </body>

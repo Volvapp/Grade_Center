@@ -1,24 +1,28 @@
 package com.uni.GradeCenter.model.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.util.List;
 
 public class ClassroomDTO {
     private Long id;
-    @NotBlank
-    @Size(min = 2, max = 5)
+
+    @NotBlank(message = "Името на паралелката не може да е празно.")
+    @Size(max = 1, message = "Името трябва да е 1 символ.")
     private String name;
-    @NotBlank
-    @Size(min = 1, max = 12)
+
+    @NotNull(message = "Класът е задължителен.")
+    @Min(value = 1, message = "Минималният клас е 1.")
+    @Max(value = 12, message = "Максималният клас е 12.")
     private Integer grade;
+
+    @NotNull(message = "Училището е задължително.")
     private Long schoolId;
+
     private List<Long> studentIds;
     private List<Long> scheduleIds;
 
-    public ClassroomDTO() {
-    }
+    public ClassroomDTO() {}
 
     public Long getId() {
         return id;

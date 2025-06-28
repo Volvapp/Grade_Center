@@ -257,18 +257,23 @@ public class AdminController {
         return "admin-schools-classroom-create";
     }
 
-    @PostMapping("schools/classrooms/create")
+    @PostMapping("/schools/classrooms/create")
     public String createClassroom(
-            @RequestParam String name,
-            @RequestParam Integer grade,
-            @RequestParam Long schoolId,
+            @Valid @ModelAttribute("classroom") ClassroomDTO classroomDTO,
+            BindingResult bindingResult,
+            Model model,
             RedirectAttributes redirectAttributes
     ) {
-        School school = schoolService.getSchoolById(schoolId);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("schools", schoolService.getAllSchools());
+            return "admin-schools-classroom-create";
+        }
+
+        School school = schoolService.getSchoolById(classroomDTO.getSchoolId());
 
         Classroom classroom = new Classroom();
-        classroom.setName(name);
-        classroom.setGrade(grade);
+        classroom.setName(classroomDTO.getName());
+        classroom.setGrade(classroomDTO.getGrade());
         classroom.setSchool(school);
 
         classroomService.createClassroom(classroom);
@@ -276,6 +281,7 @@ public class AdminController {
         redirectAttributes.addFlashAttribute("successMessage", "Паралелката е създадена успешно.");
         return "redirect:/admin/schools";
     }
+
 
     @GetMapping("/subjects/create")
     public String createSubjectForm(Model model) {
