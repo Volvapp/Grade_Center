@@ -56,6 +56,22 @@
             font-weight: normal;
         }
 
+        .home-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: var(--main-green);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .home-link:hover {
+            color: var(--hover-green);
+            text-decoration: underline;
+        }
+
         .btn-submit {
             margin-top: 25px;
             background-color: var(--main-green);
@@ -76,7 +92,7 @@
 <body>
 
 <div class="form-container">
-    <h2 th:text="${classroom != null} ? 'Редактирай паралелка' : 'Създай паралелка'">Форма</h2>
+    <h2 th:text="${classroom.name != null} ? 'Редактирай паралелка' : 'Създай паралелка'">Форма</h2>
 
     <form th:action="@{/admin/schools/classrooms/create}" method="post">
         <input type="hidden" name="id" th:if="${classroom != null}" th:value="${classroom.id}" />
@@ -99,6 +115,8 @@
 
         <button type="submit" class="btn-submit">Запази</button>
     </form>
+
+    <a th:href="@{/admin/schools}" class="home-link">⬅ Обратно към училищата</a>
 
 </div>
 

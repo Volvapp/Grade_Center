@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 @Table(name = "subjects")
 public class Subject extends BaseEntity{
 
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @ManyToOne

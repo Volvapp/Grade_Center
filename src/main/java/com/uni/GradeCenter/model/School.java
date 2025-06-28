@@ -23,14 +23,18 @@ public class School extends BaseEntity {
     private List<Student> students;
 
     @OneToMany(mappedBy = "school")
+    private List<Subject> subjects;
+
+    @OneToMany(mappedBy = "school")
     private List<Classroom> classrooms;
 
-    public School(String name, String address, User director, List<Teacher> teachers, List<Student> students, List<Classroom> classrooms) {
+    public School(String name, String address, User director, List<Teacher> teachers, List<Student> students, List<Subject> subjects, List<Classroom> classrooms) {
         this.name = name;
         this.address = address;
         this.director = director;
         this.teachers = teachers;
         this.students = students;
+        this.subjects = subjects;
         this.classrooms = classrooms;
     }
 
@@ -84,5 +88,13 @@ public class School extends BaseEntity {
 
     public void setClassrooms(List<Classroom> classrooms) {
         this.classrooms = classrooms;
+    }
+
+    public List<Subject> getSubjects() {
+        return subjects;
+    }
+
+    public void setSubjects(List<Subject> subjects) {
+        this.subjects = subjects;
     }
 }

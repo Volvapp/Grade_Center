@@ -5,6 +5,7 @@ import com.uni.GradeCenter.model.dto.ClassroomDTO;
 import com.uni.GradeCenter.model.dto.ParentDTO;
 import com.uni.GradeCenter.model.dto.UserDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateSchoolBindingDTO;
+import com.uni.GradeCenter.model.dto.bindingDTOs.CreateSubjectBindingDTO;
 import com.uni.GradeCenter.model.enums.Role;
 import com.uni.GradeCenter.service.*;
 import jakarta.validation.Valid;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -248,30 +250,81 @@ public class AdminController {
         return "redirect:/admin/teachers";
     }
 
-        @GetMapping("schools/classrooms/create")
-        public String createClassroomForm(Model model) {
-                model.addAttribute("classroom", new ClassroomDTO());
-                model.addAttribute("schools", schoolService.getAllSchools());
-            return "admin-schools-classroom-create";
-        }
-        @PostMapping("schools/classrooms/create")
-        public String createClassroom(
-                @RequestParam String name,
-                @RequestParam Integer grade,
-                @RequestParam Long schoolId,
-                RedirectAttributes redirectAttributes
-        ) {
-            School school = schoolService.getSchoolById(schoolId);
-
-            Classroom classroom = new Classroom();
-            classroom.setName(name);
-            classroom.setGrade(grade);
-            classroom.setSchool(school);
-
-            classroomService.createClassroom(classroom);
-
-            redirectAttributes.addFlashAttribute("successMessage", "Паралелката е създадена успешно.");
-            return "redirect:/admin/schools";
-        }
-
+    @GetMapping("schools/classrooms/create")
+    public String createClassroomForm(Model model) {
+        model.addAttribute("classroom", new ClassroomDTO());
+        model.addAttribute("schools", schoolService.getAllSchools());
+        return "admin-schools-classroom-create";
     }
+
+    @PostMapping("schools/classrooms/create")
+    public String createClassroom(
+            @RequestParam String name,
+            @RequestParam Integer grade,
+            @RequestParam Long schoolId,
+            RedirectAttributes redirectAttributes
+    ) {
+        School school = schoolService.getSchoolById(schoolId);
+
+        Classroom classroom = new Classroom();
+        classroom.setName(name);
+        classroom.setGrade(grade);
+        classroom.setSchool(school);
+
+        classroomService.createClassroom(classroom);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Паралелката е създадена успешно.");
+        return "redirect:/admin/schools";
+    }
+
+    @GetMapping("/subjects/create")
+    public String createSubjectForm(Model model) {
+        if (!model.containsAttribute("createSubjectBindingDTO")) {
+            model.addAttribute("createSubjectBindingDTO", new CreateSubjectBindingDTO());
+        }
+        List<School> schools = schoolService.getAllSchools();
+
+        model.addAttribute("schools", schools);
+
+        return "admin-subject-create";
+    }
+
+    @PostMapping("/subjects/create")
+    public String createSubject(
+            @Valid @ModelAttribute("createSubjectBindingDTO") CreateSubjectBindingDTO createSubjectBindingDTO,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes
+    ) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("createSubjectBindingDTO", createSubjectBindingDTO);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.createSubjectBindingDTO", bindingResult);
+            return "redirect:/admin/subjects/create";
+        }
+
+        Optional<School> bySchoolName = schoolService.findBySchoolName(createSubjectBindingDTO.getSchool());
+
+        if (bySchoolName.isPresent()) {
+            for (Subject subject : bySchoolName.get().getSubjects()) {
+                if (subject.getName().equals(createSubjectBindingDTO.getName())) {
+                    bindingResult.rejectValue("name", "subject.exists", "Този предмет вече съществува в избраното училище.");
+                    redirectAttributes.addFlashAttribute("createSubjectBindingDTO", createSubjectBindingDTO);
+                    redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.createSubjectBindingDTO", bindingResult);
+                    return "redirect:/admin/subjects/create";
+                }
+            }
+
+            Subject subject = new Subject();
+            subject.setName(createSubjectBindingDTO.getName());
+            subject.setSchool(bySchoolName.get());
+
+            subject = subjectService.createSubject(subject);
+
+            bySchoolName.get().getSubjects().add(subject);
+            schoolService.saveSchool(bySchoolName.get());
+        }
+
+        redirectAttributes.addFlashAttribute("successMessage", "Предметът беше създаден успешно!");
+        return "redirect:/admin/schools";
+    }
+
+}
