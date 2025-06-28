@@ -234,10 +234,13 @@ public class AdminController {
     ) {
         Teacher teacher = teacherService.getTeacherById(id);
 
+        if (teacher.getSchool().getId() != schoolId) {
+            teacher.setQualifiedSubjects(new ArrayList<>());
+        }
         School school = schoolService.getSchoolById(schoolId);
         teacher.setSchool(school);
 
-        if (qualifiedSubjectsIds != null && !qualifiedSubjectsIds.isEmpty()) {
+        if (qualifiedSubjectsIds != null && !qualifiedSubjectsIds.isEmpty() && teacher.getSchool().getId() == schoolId) {
             List<Subject> subjects = subjectService.getAllSubjectsByIds(qualifiedSubjectsIds);
             teacher.setQualifiedSubjects(subjects);
         } else {
