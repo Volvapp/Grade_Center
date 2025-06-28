@@ -1,10 +1,17 @@
 package com.uni.GradeCenter.model.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 public class ClassroomDTO {
     private Long id;
+    @NotBlank
+    @Size(min = 2, max = 5)
     private String name;
+    @NotBlank
+    @Size(min = 1, max = 12)
     private Integer grade;
     private Long schoolId;
     private List<Long> studentIds;

@@ -1,10 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Редакция на паралелка</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root {
+            --main-green: #2e7d32;
+            --light-green: #e8f5e9;
+            --hover-green: #256d27;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: var(--light-green);
+            color: #1b5e20;
+            padding: 20px;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--main-green);
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 15px 0 5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid var(--main-green);
+            border-radius: 8px;
+            background-color: #f1f8f1;
+            font-size: 16px;
+        }
+
+        .checkbox-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+
+        .btn-submit {
+            margin-top: 25px;
+            background-color: var(--main-green);
+            color: white;
+            padding: 14px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--hover-green);
+        }
+    </style>
 </head>
 <body>
+
+<div class="form-container">
+    <h2 th:text="${classroom != null} ? 'Редактирай паралелка' : 'Създай паралелка'">Форма</h2>
+
+    <form th:action="@{/admin/schools/classrooms/create}" method="post">
+        <input type="hidden" name="id" th:if="${classroom != null}" th:value="${classroom.id}" />
+
+        <label for="name">Име на паралелката</label>
+        <input type="text" id="name" name="name" th:value="${classroom?.name}" required />
+
+        <label for="grade">Клас</label>
+        <input type="number" id="grade" name="grade" min="1" max="12" th:value="${classroom?.grade}" required />
+
+        <label for="school">Училище</label>
+        <select id="school" name="schoolId" required>
+            <option value="">-- Избери училище --</option>
+            <option th:each="school : ${schools}"
+                    th:value="${school.id}"
+                    th:text="${school.name}"
+                    th:selected="${classroom != null and classroom.schoolId == school.id}">
+            </option>
+        </select>
+
+        <button type="submit" class="btn-submit">Запази</button>
+    </form>
+
+</div>
 
 </body>
 </html>

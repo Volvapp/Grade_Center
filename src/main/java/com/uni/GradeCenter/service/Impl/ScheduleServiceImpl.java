@@ -59,22 +59,18 @@ public class ScheduleServiceImpl implements ScheduleService {
     public void initializeSchedules() {
         if (scheduleRepository.count() > 0) return;
 
-        // Вземи учител
         Teacher teacher = teacherService.getAllTeachers().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No teacher found."));
 
-        // Вземи класна стая
         Classroom classroom = classroomService.getAllClassrooms().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No classroom found."));
 
-        // Вземи предмет, по който е квалифициран учителят
         Subject subject = teacher.getQualifiedSubjects().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Teacher is not qualified for any subject."));
 
-        // Създай разписание
         Schedule schedule = new Schedule();
         schedule.setDayOfWeek(DayOfWeek.MONDAY);
         schedule.setStartTime(LocalTime.of(8, 0));
@@ -84,5 +80,10 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.setSubject(subject);
 
         scheduleRepository.save(schedule);
+    }
+
+    @Override
+    public List<Schedule> getAllByIds(List<Long> scheduleIds) {
+        return this.scheduleRepository.findAllById(scheduleIds);
     }
 }

@@ -59,7 +59,6 @@ public class TeacherServiceImpl implements TeacherService {
     public void initializeTeachers() {
         if (teacherRepository.count() > 0) return;
 
-        // Вземи потребителите (учители)
         User teacherUser1 = userService.findByRoleAndUsername(Role.TEACHER, "teacher")
                 .orElseThrow(() -> new IllegalStateException("User 'teacher' not found."));
         User teacherUser2 = userService.findByRoleAndUsername(Role.TEACHER, "teacher2")
@@ -69,7 +68,6 @@ public class TeacherServiceImpl implements TeacherService {
         User teacherUser4 = userService.findByRoleAndUsername(Role.TEACHER, "teacher4")
                 .orElseThrow(() -> new IllegalStateException("User 'teacher4' not found."));
 
-        // Вземи училищата
         School school1 = schoolService.findBySchoolName("First Language School")
                 .orElseThrow(() -> new IllegalStateException("School 1 not found."));
         School school2 = schoolService.findBySchoolName("Second Language School")
@@ -79,7 +77,6 @@ public class TeacherServiceImpl implements TeacherService {
         School school4 = schoolService.findBySchoolName("Fourth Language School")
                 .orElseThrow(() -> new IllegalStateException("School 4 not found."));
 
-        // Вземи предмети (4 различни за всеки учител ако има поне 16)
         List<Subject> allSubjects = subjectService.findAll(); // или subjectRepository.findAll()
         if (allSubjects.size() < 16) {
             throw new IllegalStateException("Not enough subjects to assign uniquely to each teacher.");

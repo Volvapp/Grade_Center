@@ -58,12 +58,11 @@ public class AbsenceServiceImpl implements AbsenceService {
     public void initializeAbsences() {
         if (absenceRepository.count() > 0) return;
 
-        // Вземи студент
         Student student = studentService.getAllStudents().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No student found."));
 
-        // Вземи учител и предмет
+
         Teacher teacher = teacherService.getAllTeachers().stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No teacher found."));

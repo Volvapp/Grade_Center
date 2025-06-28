@@ -201,25 +201,27 @@ public class AdminController {
 
 
     @GetMapping("/teachers")
-    public String teachers(
-            @RequestParam(required = false) Long editId,
-            Model model
-    ) {
+    public String teachers(@RequestParam(required = false) Long editId, Model model) {
         List<Teacher> teachers = teacherService.getAllTeachers();
         model.addAttribute("teachers", teachers);
 
         if (editId != null) {
             Teacher teacher = teacherService.getTeacherById(editId);
             List<School> schools = schoolService.getAllSchools();
-            List<Subject> subjects = subjectService.getAllSubjects();
+
+            List<Subject> subjects = new ArrayList<>();
+            if (teacher.getSchool() != null) {
+                subjects = subjectService.getAllSubjectsBySchoolId(teacher.getSchool().getId());
+            }
 
             model.addAttribute("teacherToEdit", teacher);
             model.addAttribute("schools", schools);
             model.addAttribute("subjects", subjects);
         }
 
-        return "admin-teachers"; // единичен шаблон
+        return "admin-teachers";
     }
+
 
     @PostMapping("/teachers/{id}")
     public String updateTeacher(
@@ -246,11 +248,30 @@ public class AdminController {
         return "redirect:/admin/teachers";
     }
 
-    @GetMapping("schools/classrooms/create")
-    public String createClassroomForm(Model model) {
-        model.addAttribute("classroomDTO", new ClassroomDTO());
+        @GetMapping("schools/classrooms/create")
+        public String createClassroomForm(Model model) {
+                model.addAttribute("classroom", new ClassroomDTO());
+                model.addAttribute("schools", schoolService.getAllSchools());
+            return "admin-schools-classroom-create";
+        }
+        @PostMapping("schools/classrooms/create")
+        public String createClassroom(
+                @RequestParam String name,
+                @RequestParam Integer grade,
+                @RequestParam Long schoolId,
+                RedirectAttributes redirectAttributes
+        ) {
+            School school = schoolService.getSchoolById(schoolId);
 
-        return "admin-schools-classroom-create";
+            Classroom classroom = new Classroom();
+            classroom.setName(name);
+            classroom.setGrade(grade);
+            classroom.setSchool(school);
+
+            classroomService.createClassroom(classroom);
+
+            redirectAttributes.addFlashAttribute("successMessage", "Паралелката е създадена успешно.");
+            return "redirect:/admin/schools";
+        }
+
     }
-
-}

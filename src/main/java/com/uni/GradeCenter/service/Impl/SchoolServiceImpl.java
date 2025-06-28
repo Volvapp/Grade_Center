@@ -61,7 +61,6 @@ public class SchoolServiceImpl implements SchoolService {
     public void initializeSchools() {
         if (schoolRepository.count() > 0) return;
 
-        // Данни за училищата и съответните директори
         List<SchoolInitData> schoolsData = List.of(
                 new SchoolInitData("director", "First Language School", "1000 Sofia, Bulgaria Blvd. 1"),
                 new SchoolInitData("director2", "Second Language School", "1000 Blagoevgrad, Bulgaria Blvd. 1"),
@@ -116,7 +115,6 @@ public class SchoolServiceImpl implements SchoolService {
     private SchoolDTO convertToDTO(School school) {
         SchoolDTO dto = modelMapper.map(school, SchoolDTO.class);
 
-        // Попълваме ръчно id-та на асоциираните ентити
         dto.setDirectorId(school.getDirector() != null ? school.getDirector().getId() : null);
 
         dto.setTeacherIds(

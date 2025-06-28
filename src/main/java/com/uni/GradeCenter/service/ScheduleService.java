@@ -16,4 +16,6 @@ public interface ScheduleService {
     List<Schedule> getAllSchedules();
 
     void initializeSchedules();
+
+    List<Schedule> getAllByIds(List<Long> scheduleIds);
 }

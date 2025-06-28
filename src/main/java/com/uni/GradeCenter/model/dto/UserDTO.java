@@ -46,7 +46,6 @@ public class UserDTO {
         this.role = role;
     }
 
-    // Getters and setters
 
     public String getUsername() {
         return username;

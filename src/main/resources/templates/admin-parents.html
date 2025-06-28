@@ -154,14 +154,12 @@
         <select name="childId">
             <option value="">Без дете</option> <!-- опция за отписване -->
 
-            <!-- Показва ученика, ако вече е свързан с този родител -->
             <option th:if="${parent.child != null}"
                     th:value="${parent.child.id}"
                     th:text="${parent.child.user.firstName + ' ' + parent.child.user.lastName}"
                     th:selected="true">
             </option>
 
-            <!-- Показва всички деца без родител -->
             <option th:each="student : ${students}"
                     th:if="${student.parent == null}"
                     th:value="${student.id}"

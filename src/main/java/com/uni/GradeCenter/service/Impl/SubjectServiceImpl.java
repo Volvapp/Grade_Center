@@ -88,4 +88,10 @@ public class SubjectServiceImpl implements SubjectService {
     public List<Subject> findAll() {
         return subjectRepository.findAll();
     }
+
+    @Override
+    public List<Subject> getAllSubjectsBySchoolId(Long schoolId) {
+        return subjectRepository.findBySchool_Id(schoolId);
+    }
+
 }

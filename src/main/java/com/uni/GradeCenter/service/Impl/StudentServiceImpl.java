@@ -64,7 +64,6 @@ public class StudentServiceImpl implements StudentService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No classroom found."));
 
-        // Пример с няколко студента и родители
         List<String> studentUsernames = List.of("student", "student2", "student3", "student4");
         List<String> parentUsernames = List.of("parent", "parent2", "parent3", "parent4");
 

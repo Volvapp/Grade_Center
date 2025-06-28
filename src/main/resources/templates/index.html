@@ -176,7 +176,6 @@
 
 <nav>
     <ul>
-        <!-- Неавтентикирани -->
         <li th:if="${not #authorization.expression('isAuthenticated()')}">
             <a th:href="@{/users/login}" class="nav-link-button">Вход</a>
         </li>
@@ -184,7 +183,6 @@
             <a th:href="@{/users/register}" class="nav-link-button">Регистрация</a>
         </li>
 
-        <!-- Администратор -->
         <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
             <a th:href="@{/admin/users}" class="nav-link-button">Управление на потребители</a>
         </li>
@@ -195,7 +193,6 @@
             <a th:href="@{/admin/statistics}" class="nav-link-button">Статистика</a>
         </li>
 
-        <!-- Директор -->
         <li th:if="${#authorization.expression('hasRole(''DIRECTOR'')')}">
             <a th:href="@{/director/school-info}" class="nav-link-button">Информация за училището</a>
         </li>
@@ -212,7 +209,6 @@
             <a th:href="@{/director/statistics}" class="nav-link-button">Статистика</a>
         </li>
 
-        <!-- Учител -->
         <li th:if="${#authorization.expression('hasRole(''TEACHER'')')}">
             <a th:href="@{/teacher/grades}" class="nav-link-button">Управление на оценки</a>
         </li>
@@ -223,7 +219,6 @@
             <a th:href="@{/teacher/schedule}" class="nav-link-button">Учебна програма</a>
         </li>
 
-        <!-- Родител -->
         <li th:if="${#authorization.expression('hasRole(''PARENT'')')}">
             <a th:href="@{/parent/child}" class="nav-link-button">Информация за детето</a>
         </li>
@@ -234,7 +229,6 @@
             <a th:href="@{/parent/absences}" class="nav-link-button">Отсъствия на детето</a>
         </li>
 
-        <!-- Ученик -->
         <li th:if="${#authorization.expression('hasRole(''STUDENT'')')}">
             <a th:href="@{/student/grades}" class="nav-link-button">Моите оценки</a>
         </li>
@@ -242,7 +236,6 @@
             <a th:href="@{/student/absences}" class="nav-link-button">Моите отсъствия</a>
         </li>
 
-        <!-- Вход / Изход -->
         <li th:if="${#authorization.expression('isAuthenticated()')}">
             <form th:action="@{/logout}" method="post" style="display:inline;">
                 <button type="submit" class="nav-link-button">Изход</button>

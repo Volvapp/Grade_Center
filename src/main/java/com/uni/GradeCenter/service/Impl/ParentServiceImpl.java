@@ -58,7 +58,6 @@ public class ParentServiceImpl implements ParentService {
         Parent parent = parentRepository.findById(parentId)
                 .orElseThrow(() -> new IllegalArgumentException("Невалиден родител с ID: " + parentId));
 
-        // Обнови потребителя
         User user = parent.getUser();
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -68,7 +67,6 @@ public class ParentServiceImpl implements ParentService {
         Student currentChild = parent.getChild();
 
         if (childId == null) {
-            // Ако няма избрано дете – откачи текущото (ако има такова)
             if (currentChild != null) {
                 currentChild.setParent(null);
                 parent.setChild(null);
@@ -79,18 +77,15 @@ public class ParentServiceImpl implements ParentService {
                 throw new IllegalArgumentException("Невалидно дете с ID: " + childId);
             }
 
-            // Ако има различно дете – прекъсни старата връзка
             if (currentChild != null && !currentChild.getId().equals(childId)) {
                 currentChild.setParent(null);
             }
 
-            // Ако новото дете вече има родител – махни го от него
             Parent oldParent = newChild.getParent();
             if (oldParent != null && !oldParent.getId().equals(parentId)) {
                 oldParent.setChild(null);
             }
 
-            // Задай новата връзка
             parent.setChild(newChild);
             newChild.setParent(parent);
         }
