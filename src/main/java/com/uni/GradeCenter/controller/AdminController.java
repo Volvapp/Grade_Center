@@ -190,14 +190,15 @@ public class AdminController {
                                @RequestParam String firstName,
                                @RequestParam String lastName,
                                @RequestParam String email,
-                               @RequestParam Long childId,
+                               @RequestParam(required = false) Long childId,
                                RedirectAttributes redirectAttributes) {
 
         parentService.updateParentInline(id, firstName, lastName, email, childId);
-        redirectAttributes.addFlashAttribute("successMessage", "Родителят е обновен успешно.");
 
+        redirectAttributes.addFlashAttribute("successMessage", "Родителят е обновен успешно.");
         return "redirect:/admin/parents";
     }
+
 
     @GetMapping("/teachers")
     public String teachers(

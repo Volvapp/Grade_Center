@@ -322,31 +322,32 @@
 <div id="save-message" style="display:none;"></div>
 
 <script>
-    const messageDiv = document.getElementById('save-message');
+    document.addEventListener('DOMContentLoaded', function () {
+        const messageDiv = document.getElementById('save-message');
 
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
+        if (sessionStorage.getItem('showMessage') === 'true') {
+            sessionStorage.removeItem('showMessage');
 
-            // Показваме съобщението с opacity 1
             messageDiv.textContent = 'Промяната е записана';
             messageDiv.style.display = 'block';
             messageDiv.classList.add('show-message');
-            messageDiv.classList.remove('fade-out'); // премахваме fade-out ако е добавен
 
-            // След 3 секунди стартираме fade out
             setTimeout(() => {
                 messageDiv.classList.add('fade-out');
             }, 3000);
 
-            // След като анимацията приключи (1 секунда), скриваме съобщението и пращаме формата
             messageDiv.addEventListener('transitionend', function handler() {
                 if (messageDiv.classList.contains('fade-out')) {
                     messageDiv.style.display = 'none';
                     messageDiv.classList.remove('show-message', 'fade-out');
                     messageDiv.removeEventListener('transitionend', handler);
-                    form.submit();
                 }
+            });
+        }
+
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function () {
+                sessionStorage.setItem('showMessage', 'true');
             });
         });
     });

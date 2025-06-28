@@ -65,24 +65,35 @@ public class ParentServiceImpl implements ParentService {
         user.setEmail(email);
         userService.updateUser(user);
 
-        Student newChild = studentService.getStudentById(childId);
-        if (newChild == null) {
-            throw new IllegalArgumentException("Невалидно дете с ID: " + childId);
-        }
-
         Student currentChild = parent.getChild();
-        if (currentChild != null && !currentChild.getId().equals(childId)) {
-            currentChild.setParent(null);
-            parent.setChild(null);
-        }
 
-        Parent oldParent = newChild.getParent();
-        if (oldParent != null && !oldParent.getId().equals(parentId)) {
-            oldParent.setChild(null);
-        }
+        if (childId == null) {
+            // Ако няма избрано дете – откачи текущото (ако има такова)
+            if (currentChild != null) {
+                currentChild.setParent(null);
+                parent.setChild(null);
+            }
+        } else {
+            Student newChild = studentService.getStudentById(childId);
+            if (newChild == null) {
+                throw new IllegalArgumentException("Невалидно дете с ID: " + childId);
+            }
 
-        parent.setChild(newChild);
-        newChild.setParent(parent);
+            // Ако има различно дете – прекъсни старата връзка
+            if (currentChild != null && !currentChild.getId().equals(childId)) {
+                currentChild.setParent(null);
+            }
+
+            // Ако новото дете вече има родител – махни го от него
+            Parent oldParent = newChild.getParent();
+            if (oldParent != null && !oldParent.getId().equals(parentId)) {
+                oldParent.setChild(null);
+            }
+
+            // Задай новата връзка
+            parent.setChild(newChild);
+            newChild.setParent(parent);
+        }
 
         parentRepository.save(parent);
     }

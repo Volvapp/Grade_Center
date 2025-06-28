@@ -151,14 +151,24 @@
 
         <input type="email" name="email" th:value="${parent.user.email}" required placeholder="email@example.com" />
 
-        <select name="childId" required>
-            <option value="">Избери дете</option>
+        <select name="childId">
+            <option value="">Без дете</option> <!-- опция за отписване -->
+
+            <!-- Показва ученика, ако вече е свързан с този родител -->
+            <option th:if="${parent.child != null}"
+                    th:value="${parent.child.id}"
+                    th:text="${parent.child.user.firstName + ' ' + parent.child.user.lastName}"
+                    th:selected="true">
+            </option>
+
+            <!-- Показва всички деца без родител -->
             <option th:each="student : ${students}"
+                    th:if="${student.parent == null}"
                     th:value="${student.id}"
-                    th:text="${student.user.firstName + ' ' + student.user.lastName}"
-                    th:selected="${parent.child != null and parent.child.id == student.id}">
+                    th:text="${student.user.firstName + ' ' + student.user.lastName}">
             </option>
         </select>
+
 
         <button type="submit" class="btn">💾 Запази</button>
     </form>
