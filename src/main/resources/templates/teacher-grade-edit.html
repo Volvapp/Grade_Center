@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Редакция на оценка</title>
+    <style>
+        /* Оставяме същите стилове от предишния файл, но премахваме ненужните полета */
+        body {
+            background: #e8f5e9;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 128, 0, 0.15);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2e7d32;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #388e3c;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #a5d6a7;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            border-color: #66bb6a;
+            outline: none;
+        }
+
+        .submit-btn {
+            background-color: #43a047;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background-color: #388e3c;
+        }
+
+        .field-error {
+            color: #c62828;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .home-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #2e7d32;
+            text-decoration: none;
+        }
+
+        .home-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Редакция на оценка</h2>
+
+    <form th:action="@{/teacher/grade/edit}" th:object="${editGradeBindingDTO}" method="post">
+        <input type="hidden" name="_method" value="put"/>
+        <input type="hidden" th:field="*{gradeId}"/>
+
+        <div class="form-group">
+            <label for="value">Нова стойност</label>
+            <input type="text" id="value" th:field="*{value}" placeholder="напр. 5.50"/>
+            <div class="field-error" th:if="${#fields.hasErrors('value')}" th:errors="*{value}"></div>
+        </div>
+
+        <button type="submit" class="submit-btn">Запиши промяната</button>
+    </form>
+
+    <a th:href="@{/teacher/grades}" class="home-link">⬅ Назад към списъка</a>
+</div>
+
+</body>
+</html>

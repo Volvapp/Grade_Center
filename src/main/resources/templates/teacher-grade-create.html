@@ -2,8 +2,7 @@
 <html lang="bg" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Създаване на училище | Електронен дневник</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Добавяне на оценка</title>
     <style>
         * {
             box-sizing: border-box;
@@ -130,38 +129,45 @@
 <body>
 
 <div class="form-container">
-    <h2>Създаване на училище</h2>
+    <h2>Добавяне на оценка</h2>
 
-    <form th:action="@{/admin/schools/create}" method="post" th:object="${createSchoolBindingDTO}">
+    <form th:action="@{/teacher/grade/create}" th:object="${createGradeBindingDTO}" method="post">
 
+        <!-- Hidden ID полета -->
+        <input type="hidden" th:field="*{classroomId}"/>
+        <input type="hidden" th:field="*{studentId}"/>
+        <input type="hidden" th:field="*{subjectId}"/>
+
+        <!-- Имена: визуални + скрити, за да се пратят в DTO -->
+        <input type="hidden" th:field="*{classroomName}"/>
         <div class="form-group">
-            <label for="name">Име на училище</label>
-            <input type="text" id="name" th:field="*{name}"/>
-            <small th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="field-error"></small>
+            <label>Клас</label>
+            <input type="text" th:value="*{classroomName}" readonly/>
         </div>
 
+        <input type="hidden" th:field="*{studentName}"/>
         <div class="form-group">
-            <label for="address">Адрес</label>
-            <input type="text" id="address" th:field="*{address}"/>
-            <small th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="field-error"></small>
+            <label>Ученик</label>
+            <input type="text" th:value="*{studentName}" readonly/>
         </div>
 
+        <input type="hidden" th:field="*{subjectName}"/>
         <div class="form-group">
-            <label for="directorId">Директор</label>
-            <select id="directorId" th:field="*{director}" required>
-                <option value="">-- Изберете директор --</option>
-                <option th:each="director : ${directors}"
-                        th:value="${director.id}"
-                        th:text="${director.firstName + ' ' + director.lastName}">
-                </option>
-            </select>
-            <small th:if="${#fields.hasErrors('director')}" th:errors="*{director}" class="field-error"></small>
+            <label>Предмет</label>
+            <input type="text" th:value="*{subjectName}" readonly/>
         </div>
 
-        <button type="submit" class="submit-btn">Създай училище</button>
+        <!-- Оценка -->
+        <div class="form-group">
+            <label for="grade">Оценка</label>
+            <input type="text" id="grade" th:field="*{grade}" placeholder="Въведи оценка (напр. 5.50)"/>
+            <small th:if="${#fields.hasErrors('grade')}" th:errors="*{grade}" class="field-error"></small>
+        </div>
+
+        <button type="submit" class="submit-btn">Запиши оценка</button>
     </form>
 
-    <a th:href="@{/admin/schools}" class="home-link">⬅ Обратно към училищата</a>
+    <a th:href="@{/teacher/grades}" class="home-link">⬅ Назад към списъка с оценки</a>
 </div>
 
 </body>

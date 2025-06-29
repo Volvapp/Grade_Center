@@ -120,4 +120,9 @@ public class TeacherServiceImpl implements TeacherService {
     public Teacher getTeacherByUserId(Long id) {
         return this.teacherRepository.findByUser_Id(id);
     }
+
+    @Override
+    public Teacher findByUsername(String name) {
+        return teacherRepository.findByUser_Username(name);
+    }
 }

@@ -3,6 +3,7 @@ package com.uni.GradeCenter.service;
 import com.uni.GradeCenter.model.Classroom;
 import com.uni.GradeCenter.model.Schedule;
 import com.uni.GradeCenter.model.Subject;
+import com.uni.GradeCenter.model.Teacher;
 import com.uni.GradeCenter.model.dto.AvailableSlotDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateScheduleBindingDTO;
 
@@ -31,4 +32,6 @@ public interface ScheduleService {
     List<AvailableSlotDTO> getAvailableStartTimesWithTeachers(Classroom classroom, Subject subject, DayOfWeek dayOfWeek);
 
     void createScheduleFrontend(CreateScheduleBindingDTO dto);
+
+    List<Schedule> findByTeacherAndSubject(Teacher teacher, Subject subject);
 }

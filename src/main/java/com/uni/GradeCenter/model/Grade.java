@@ -21,12 +21,12 @@ public class Grade extends BaseEntity{
     private Teacher teacher;
 
     @Column(name = "value")
-    private Integer value;
+    private Double value;
 
     @Column(name = "date")
     private LocalDate date;
 
-    public Grade(Student student, Subject subject, Teacher teacher, Integer value, LocalDate date) {
+    public Grade(Student student, Subject subject, Teacher teacher, Double value, LocalDate date) {
         this.student = student;
         this.subject = subject;
         this.teacher = teacher;
@@ -59,11 +59,11 @@ public class Grade extends BaseEntity{
         this.teacher = teacher;
     }
 
-    public Integer getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(Integer value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 

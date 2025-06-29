@@ -177,4 +177,9 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new RuntimeException("No teacher found.");
         }
     }
+
+    @Override
+    public List<Schedule> findByTeacherAndSubject(Teacher teacher, Subject subject) {
+        return scheduleRepository.findByTeacherAndSubject(teacher, subject);
+    }
 }

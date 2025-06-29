@@ -14,5 +14,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
 
     Teacher findByUser_Id(Long id);
 
+    Teacher findByUser_Username(String username);
+
     List<Teacher> findBySchoolAndQualifiedSubjectsContaining(School school, Subject subject);
 }
