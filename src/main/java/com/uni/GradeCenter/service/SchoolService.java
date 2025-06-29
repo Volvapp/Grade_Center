@@ -18,6 +18,8 @@ public interface SchoolService {
 
     void deleteSchoolById(Long id);
 
+    School findByUserId(Long id);
+
     List<School> getAllSchools();
 
     void initializeSchools();

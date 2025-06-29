@@ -3,6 +3,7 @@ package com.uni.GradeCenter.service;
 import com.uni.GradeCenter.model.Grade;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GradeService {
     Grade createGrade(Grade grade);
@@ -16,4 +17,10 @@ public interface GradeService {
     List<Grade> getAllGrades();
 
     void initializeGrades();
+
+    Map<String, Long> countGradesPerSubjectForSchool(Long id);
+
+    Map<String, Double> averageGradesPerTeacherForSchool(Long id);
+
+    Double calculateOverallAverageForSchool(Long id);
 }

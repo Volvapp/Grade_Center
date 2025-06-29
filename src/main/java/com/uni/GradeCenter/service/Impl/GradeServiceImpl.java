@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class GradeServiceImpl implements GradeService {
@@ -85,4 +87,31 @@ public class GradeServiceImpl implements GradeService {
 
         gradeRepository.saveAll(List.of(grade1, grade2));
     }
+
+    @Override
+    public Map<String, Long> countGradesPerSubjectForSchool(Long schoolId) {
+        return gradeRepository.findAll().stream()
+                .filter(g -> g.getStudent().getSchool().getId().equals(schoolId))
+                .collect(Collectors.groupingBy(g -> g.getSubject().getName(), Collectors.counting()));
+    }
+
+    @Override
+    public Map<String, Double> averageGradesPerTeacherForSchool(Long schoolId) {
+        return gradeRepository.findAll().stream()
+                .filter(g -> g.getStudent().getSchool().getId().equals(schoolId))
+                .collect(Collectors.groupingBy(
+                        g -> g.getTeacher().getUser().getFirstName() + " " + g.getTeacher().getUser().getLastName(),
+                        Collectors.averagingDouble(Grade::getValue)
+                ));
+    }
+
+    @Override
+    public Double calculateOverallAverageForSchool(Long schoolId) {
+        return gradeRepository.findAll().stream()
+                .filter(g -> g.getStudent().getSchool().getId().equals(schoolId))
+                .mapToDouble(Grade::getValue)
+                .average()
+                .orElse(0.0);
+    }
+
 }

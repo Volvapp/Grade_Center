@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Информация за училището</title>
+    <style>
+        /* Основни цветове */
+        :root {
+            --green-dark: #2f6f4e;
+            --green: #4caf50;
+            --green-light: #a5d6a7;
+            --green-lighter: #e8f5e9;
+            --text-dark: #1b3a2a;
+            --text-light: #f1f8f3;
+            --border-color: #c8e6c9;
+        }
+
+        /* Reset и базови стилове */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--green-lighter);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 1rem 1.5rem;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        a.back-button {
+            align-self: flex-start;
+            color: var(--green-dark);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+        a.back-button:hover,
+        a.back-button:focus {
+            color: var(--green);
+            outline: none;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--green-dark);
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .info, .section, .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgb(46 125 50 / 0.15);
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            max-width: 800px;
+            transition: box-shadow 0.3s ease;
+        }
+        .info:hover, .section:hover, .card:hover {
+            box-shadow: 0 6px 15px rgb(46 125 50 / 0.3);
+        }
+
+        .stat {
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .info p {
+            font-size: 1.1rem;
+            margin: 0.4rem 0;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            margin-bottom: 0.8rem;
+            border-bottom: 2px solid var(--green-light);
+            padding-bottom: 0.3rem;
+            color: var(--green-dark);
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        ul li {
+            background-color: var(--green-lighter);
+            margin-bottom: 0.4rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            color: var(--green-dark);
+            font-weight: 600;
+            box-shadow: inset 1px 1px 3px rgba(46, 125, 50, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        ul li:hover {
+            background-color: var(--green-light);
+        }
+
+        .list li {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .list strong {
+            color: var(--green);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+            .info, .section, .card {
+                padding: 1rem 1.2rem;
+            }
+            ul li {
+                font-size: 0.95rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<a href="/" class="back-button">← Назад</a>
+
+<h1>Информация за училището</h1>
+
+<div class="info">
+    <p><span class="stat">Име:</span> <span th:text="${school.name}">Име</span></p>
+    <p><span class="stat">Адрес:</span> <span th:text="${school.address}">Адрес</span></p>
+    <p><span class="stat">Директор:</span> <span th:text="${school.director.firstName + ' ' + school.director.lastName}">Име на директора</span></p>
+</div>
+
+<div class="section">
+    <h2>Преподаватели (общо: <span th:text="${#lists.size(school.teachers)}">0</span>)</h2>
+    <ul>
+        <li th:each="teacher : ${school.teachers}"
+            th:text="${teacher.user.firstName + ' ' + teacher.user.lastName}">Име на преподавател</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>Ученици (общо: <span th:text="${#lists.size(school.students)}">0</span>)</h2>
+    <ul>
+        <li th:each="student : ${school.students}"
+            th:text="${student.user.firstName + ' ' + student.user.lastName}">Име на ученик</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>Предмети (общо: <span th:text="${#lists.size(school.subjects)}">0</span>)</h2>
+    <ul>
+        <li th:each="subject : ${school.subjects}"
+            th:text="${subject.name}">Име на предмет</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>Класни стаи (общо: <span th:text="${#lists.size(school.classrooms)}">0</span>)</h2>
+    <ul>
+        <li th:each="classroom : ${school.classrooms}"
+            th:text="${classroom.name + ' (клас ' + classroom.grade + ')'}">Класна стая</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>Среден успех за училището:</h2>
+    <p th:text="${overallAverage}">--</p>
+</div>
+
+<div class="section">
+    <h2>Брой оценки по предмет</h2>
+    <ul>
+        <li th:each="entry : ${gradesPerSubject}">
+            <span th:text="${entry.key}">Предмет</span>:
+            <span th:text="${entry.value}">0</span> оценки
+        </li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>Среден успех по учител</h2>
+    <ul>
+        <li th:each="entry : ${averagePerTeacher}">
+            <span th:text="${entry.key}">Учител</span>:
+            <span th:text="${#numbers.formatDecimal(entry.value, 1, 2)}">0.00</span>
+        </li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>Родители (<span th:text="${#lists.size(parents)}">0</span>)</h2>
+    <ul class="list">
+        <li th:each="parent : ${parents}">
+            <span th:text="${parent.user.firstName + ' ' + parent.user.lastName}">Име на родител</span>
+            <span> - дете: </span>
+            <strong th:text="${parent.child.user.firstName + ' ' + parent.child.user.lastName}">Име на дете</strong>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>

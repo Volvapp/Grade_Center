@@ -215,19 +215,7 @@
         </li>
 
         <li th:if="${#authorization.expression('hasRole(''DIRECTOR'')')}">
-            <a th:href="@{/director/school-info}" class="nav-link-button">Информация за училището</a>
-        </li>
-        <li th:if="${#authorization.expression('hasRole(''DIRECTOR'')')}">
-            <a th:href="@{/director/teachers}" class="nav-link-button">Преподаватели</a>
-        </li>
-        <li th:if="${#authorization.expression('hasRole(''DIRECTOR'')')}">
-            <a th:href="@{/director/students}" class="nav-link-button">Ученици</a>
-        </li>
-        <li th:if="${#authorization.expression('hasRole(''DIRECTOR'')')}">
-            <a th:href="@{/director/parents}" class="nav-link-button">Родители</a>
-        </li>
-        <li th:if="${#authorization.expression('hasRole(''DIRECTOR'')')}">
-            <a th:href="@{/director/statistics}" class="nav-link-button">Статистика</a>
+            <a th:href="@{/director/school}" class="nav-link-button">Информация за училището</a>
         </li>
 
         <li th:if="${#authorization.expression('hasRole(''TEACHER'')')}">
