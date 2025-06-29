@@ -79,6 +79,7 @@ public class UserServiceImpl implements UserService {
                 newUser("director3", "Guliver", "Director", "director3@example.com", Role.DIRECTOR),
                 newUser("director4", "Yonko", "Director", "director4@example.com", Role.DIRECTOR),
                 newUser("teacher", "Tom", "Teacher", "teacher@example.com", Role.TEACHER),
+                newUser("teacher1_2", "Tom2", "Teacher1_2", "teacher1_2@example.com", Role.TEACHER),
                 newUser("teacher2", "Zeus", "Teacher", "teacher2@example.com", Role.TEACHER),
                 newUser("teacher3", "Loki", "Teacher", "teacher3@example.com", Role.TEACHER),
                 newUser("teacher4", "Aristotel", "Teacher", "teacher4@example.com", Role.TEACHER),

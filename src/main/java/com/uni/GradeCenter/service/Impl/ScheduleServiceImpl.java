@@ -4,6 +4,7 @@ import com.uni.GradeCenter.model.Classroom;
 import com.uni.GradeCenter.model.Schedule;
 import com.uni.GradeCenter.model.Subject;
 import com.uni.GradeCenter.model.Teacher;
+import com.uni.GradeCenter.model.dto.AvailableSlotDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateScheduleBindingDTO;
 import com.uni.GradeCenter.repository.ClassroomRepository;
 import com.uni.GradeCenter.repository.ScheduleRepository;
@@ -16,9 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,12 +27,14 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final TeacherService teacherService;
     private final ClassroomService classroomService;
     private final SubjectService subjectService;
+    private final TeacherRepository teacherRepository;
 
-    public ScheduleServiceImpl(ScheduleRepository scheduleRepository, TeacherService teacherService, ClassroomService classroomService, SubjectService subjectService) {
+    public ScheduleServiceImpl(ScheduleRepository scheduleRepository, TeacherService teacherService, ClassroomService classroomService, SubjectService subjectService, TeacherRepository teacherRepository) {
         this.scheduleRepository = scheduleRepository;
         this.teacherService = teacherService;
         this.classroomService = classroomService;
         this.subjectService = subjectService;
+        this.teacherRepository = teacherRepository;
     }
 
     @Override
@@ -113,16 +114,29 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<LocalTime> getAvailableStartTimes(Classroom classroom, Subject subject, DayOfWeek dayOfWeek) {
+    public List<AvailableSlotDTO> getAvailableStartTimesWithTeachers(Classroom classroom, Subject subject, DayOfWeek dayOfWeek) {
         List<LocalTime> allSlots = getDailyLessonSlots();
 
-        // Намери всички часове в училището по дадения ден
-        List<Schedule> schedulesInSameSchool = scheduleRepository.findByClassroom_SchoolAndDayOfWeek(classroom.getSchool(), dayOfWeek);
+        List<Teacher> qualifiedTeachers = teacherRepository
+                .findBySchoolAndQualifiedSubjectsContaining(classroom.getSchool(), subject);
 
-        return allSlots.stream()
-                .filter(slot -> schedulesInSameSchool.stream()
-                        .noneMatch(s -> s.getStartTime().equals(slot)))
-                .collect(Collectors.toList());
+        List<Schedule> schedules = scheduleRepository
+                .findByClassroom_SchoolAndDayOfWeek(classroom.getSchool(), dayOfWeek);
+
+        List<AvailableSlotDTO> result = new ArrayList<>();
+
+        for (Teacher teacher : qualifiedTeachers) {
+            for (LocalTime slot : allSlots) {
+                boolean isBusy = schedules.stream()
+                        .anyMatch(s -> s.getTeacher().equals(teacher) && s.getStartTime().equals(slot));
+
+                if (!isBusy) {
+                    result.add(new AvailableSlotDTO(slot, teacher.getUser().getFirstName() + " " + teacher.getUser().getLastName()));
+                }
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -130,18 +144,17 @@ public class ScheduleServiceImpl implements ScheduleService {
         Classroom classroomById = classroomService.getClassroomById(dto.getClassroomId());
         Subject subjectById = subjectService.getSubjectById(dto.getSubjectId());
 
-        Teacher teacherForSchedule = null;
+        String teacherFullName = dto.getTeacherName().trim();
 
-        for (Teacher teacher : subjectById.getSchool().getTeachers()) {
-            for (Subject qualifiedSubject : teacher.getQualifiedSubjects()) {
-                if (qualifiedSubject.getName().equals(subjectById.getName())) {
-                    teacherForSchedule = teacher;
-                    break;
-                }
-            }
-        }
+        List<Teacher> qualifiedTeachers = teacherRepository
+                .findBySchoolAndQualifiedSubjectsContaining(classroomById.getSchool(), subjectById);
 
-        if (teacherForSchedule != null) {
+        Teacher selectedTeacher = qualifiedTeachers.stream()
+                .filter(t -> (t.getUser().getFirstName() + " " + t.getUser().getLastName()).equals(teacherFullName))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Учителят не е намерен или не преподава този предмет."));
+
+        if (selectedTeacher != null) {
             Schedule schedule = new Schedule();
 
             schedule.setClassroom(classroomById);
@@ -149,7 +162,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             schedule.setEndTime(dto.getStartTime().plusMinutes(40));
             schedule.setDayOfWeek(dto.getDayOfWeek());
             schedule.setSubject(subjectById);
-            schedule.setTeacher(teacherForSchedule);
+            schedule.setTeacher(selectedTeacher);
 
             schedule = scheduleRepository.save(schedule);
 
@@ -157,9 +170,11 @@ public class ScheduleServiceImpl implements ScheduleService {
 
             classroomService.updateClassroom(classroomById);
 
-            teacherForSchedule.getSchedules().add(schedule);
+            selectedTeacher.getSchedules().add(schedule);
 
-            teacherService.updateTeacher(teacherForSchedule);
+            teacherService.updateTeacher(selectedTeacher);
+        } else {
+            throw new RuntimeException("No teacher found.");
         }
     }
 }

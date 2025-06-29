@@ -1,6 +1,7 @@
 package com.uni.GradeCenter.controller;
 
 import com.uni.GradeCenter.model.*;
+import com.uni.GradeCenter.model.dto.AvailableSlotDTO;
 import com.uni.GradeCenter.model.dto.ClassroomDTO;
 import com.uni.GradeCenter.model.dto.UserDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateScheduleBindingDTO;
@@ -348,16 +349,24 @@ public class AdminController {
 
     @GetMapping("/schedules/available-times")
     @ResponseBody
-    public List<LocalTime> getAvailableTimes(@RequestParam Long classroomId,
-                                             @RequestParam Long subjectId,
-                                             @RequestParam DayOfWeek dayOfWeek) {
+    public List<Map<String, String>> getAvailableStartTimes(
+            @RequestParam Long classroomId,
+            @RequestParam Long subjectId,
+            @RequestParam DayOfWeek dayOfWeek) {
 
         Classroom classroom = classroomService.getClassroomById(classroomId);
         Subject subject = subjectService.getSubjectById(subjectId);
 
-        List<LocalTime> availableStartTimes = scheduleService.getAvailableStartTimes(classroom, subject, dayOfWeek);
+        List<AvailableSlotDTO> slots = scheduleService.getAvailableStartTimesWithTeachers(classroom, subject, dayOfWeek);
 
-        return availableStartTimes;
+        return slots.stream()
+                .map(slot -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("time", slot.getTime().toString());
+                    map.put("teacher", slot.getTeacherName());
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/schedules/create")
@@ -365,7 +374,6 @@ public class AdminController {
         Classroom classroom = classroomService.getClassroomById(classroomId);
 
         List<Subject> subjects = subjectService.getSubjectsBySchool(classroom.getSchool());
-        //List<LocalTime> availableStartTimes = scheduleService.getAvailableStartTimesForClassroom(classroom);
         List<LocalTime> dailyLessonSlots = scheduleService.getDailyLessonSlots();
 
         CreateScheduleBindingDTO dto = new CreateScheduleBindingDTO();
@@ -394,7 +402,7 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("successMessage", "Часът беше успешно създаден.");
             return "redirect:/admin/schedules";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Възникна грешка при създаването на часа.");
+            redirectAttributes.addFlashAttribute("errorMessage", "No teacher found for this time period");
             return "redirect:/admin/schedules/create?classroomId=" + createScheduleBindingDTO.getClassroomId();
         }
     }

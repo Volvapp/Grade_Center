@@ -161,16 +161,23 @@
             <small th:if="${#fields.hasErrors('subjectId')}" th:errors="*{subjectId}" class="field-error"></small>
         </div>
 
-        <!-- Час от деня (например 08:00 - 08:40) -->
+        <!-- Час от деня (всички възможни комбинации час + учител) -->
         <div class="form-group">
             <label for="startTime">Начален час</label>
-            <select id="startTime" th:field="*{startTime}" required>
+            <select id="startTime" name="startTime" th:field="*{startTime}" required onchange="updateSelectedTeacher()">
                 <option value="">-- Избери час --</option>
-                <option th:each="time : ${availableStartTimes}"
-                        th:value="${time}"
-                        th:text="${time}"></option>
+                <!-- опции ще се зареждат динамично -->
             </select>
             <small th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}" class="field-error"></small>
+        </div>
+
+        <!-- Скрит input, който се изпраща с формата -->
+        <input type="hidden" id="teacherNameHidden" name="teacherName" th:field="*{teacherName}" />
+
+        <!-- Показване на учителя (readonly) -->
+        <div class="form-group">
+            <label>Учител</label>
+            <input type="text" id="teacherName" disabled />
         </div>
 
         <button type="submit" class="submit-btn">Създай час</button>
@@ -179,6 +186,8 @@
     <a th:href="@{/admin/schools}" class="home-link">⬅ Обратно към училищата</a>
 </div>
 <script>
+    let timeTeacherMap = [];
+
     function loadAvailableTimes() {
         const subjectId = document.getElementById('subjectId').value;
         const dayOfWeek = document.getElementById('dayOfWeek').value;
@@ -189,18 +198,32 @@
         fetch(`/admin/schedules/available-times?classroomId=${classroomId}&subjectId=${subjectId}&dayOfWeek=${dayOfWeek}`)
             .then(res => res.json())
             .then(times => {
+                timeTeacherMap = times;
                 const timeSelect = document.getElementById('startTime');
                 timeSelect.innerHTML = '<option value="">-- Избери час --</option>';
-                times.forEach(t => {
+
+                const teacherNameInput = document.getElementById('teacherName');
+                teacherNameInput.value = '';
+                document.getElementById('teacherNameHidden').value = '';
+
+                times.forEach(entry => {
                     const opt = document.createElement('option');
-                    opt.value = t;
-                    opt.textContent = t;
+                    opt.value = entry.time;
+                    opt.textContent = `${entry.time} (${entry.teacher})`;
+                    opt.setAttribute('data-teacher', entry.teacher);
                     timeSelect.appendChild(opt);
                 });
-            })
-            .catch(err => {
-                console.error("Грешка при зареждане на часовете:", err);
             });
+    }
+
+    function updateSelectedTeacher() {
+        const selectedTime = document.getElementById('startTime').value;
+        const selectedOption = Array.from(document.getElementById('startTime').options)
+            .find(opt => opt.value === selectedTime);
+        const teacher = selectedOption ? selectedOption.getAttribute('data-teacher') : '';
+
+        document.getElementById('teacherName').value = teacher;
+        document.getElementById('teacherNameHidden').value = teacher;
     }
 </script>
 </body>

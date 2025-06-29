@@ -18,11 +18,15 @@ public class CreateScheduleBindingDTO {
     @NotNull
     private LocalTime startTime;
 
-    public CreateScheduleBindingDTO(Long classroomId, Long subjectId, DayOfWeek dayOfWeek, LocalTime startTime) {
+    @NotNull
+    private String teacherName;
+
+    public CreateScheduleBindingDTO(Long classroomId, Long subjectId, DayOfWeek dayOfWeek, LocalTime startTime, String teacherName) {
         this.classroomId = classroomId;
         this.subjectId = subjectId;
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
+        this.teacherName = teacherName;
     }
 
     public CreateScheduleBindingDTO() {
@@ -58,5 +62,13 @@ public class CreateScheduleBindingDTO {
 
     public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
+    }
+
+    public String getTeacherName() {
+        return teacherName;
+    }
+
+    public void setTeacherName(String teacherName) {
+        this.teacherName = teacherName;
     }
 }

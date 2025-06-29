@@ -60,6 +60,8 @@ public class TeacherServiceImpl implements TeacherService {
 
         User teacherUser1 = userService.findByRoleAndUsername(Role.TEACHER, "teacher")
                 .orElseThrow(() -> new IllegalStateException("User 'teacher' not found."));
+        User teacherUser1_2 = userService.findByRoleAndUsername(Role.TEACHER, "teacher1_2")
+                .orElseThrow(() -> new IllegalStateException("User 'teacher1_2' not found."));
         User teacherUser2 = userService.findByRoleAndUsername(Role.TEACHER, "teacher2")
                 .orElseThrow(() -> new IllegalStateException("User 'teacher2' not found."));
         User teacherUser3 = userService.findByRoleAndUsername(Role.TEACHER, "teacher3")
@@ -84,6 +86,9 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher teacher1 = new Teacher(teacherUser1, school1);
         teacher1.setQualifiedSubjects(allSubjects.subList(0, 4));
 
+        Teacher teacher1_2 = new Teacher(teacherUser1_2, school1);
+        teacher1_2.setQualifiedSubjects(allSubjects.subList(0, 4));
+
         Teacher teacher2 = new Teacher(teacherUser2, school2);
         teacher2.setQualifiedSubjects(allSubjects.subList(4, 8));
 
@@ -93,7 +98,7 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher teacher4 = new Teacher(teacherUser4, school4);
         teacher4.setQualifiedSubjects(allSubjects.subList(12, 16));
 
-        teacherRepository.saveAll(List.of(teacher1, teacher2, teacher3, teacher4));
+        teacherRepository.saveAll(List.of(teacher1, teacher1_2, teacher2, teacher3, teacher4));
     }
 
     @Override
