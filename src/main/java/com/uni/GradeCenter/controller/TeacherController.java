@@ -1,8 +1,11 @@
 package com.uni.GradeCenter.controller;
 
+import com.uni.GradeCenter.model.dto.bindingDTOs.AbsenceCreateBindingDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateGradeBindingDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.EditGradeBindingDTO;
+import com.uni.GradeCenter.model.dto.viewDTOs.AbsenceEntryViewDTO;
 import com.uni.GradeCenter.model.dto.viewDTOs.GradeViewDTO;
+import com.uni.GradeCenter.service.AbsenceService;
 import com.uni.GradeCenter.service.GradeService;
 import com.uni.GradeCenter.service.ScheduleService;
 import com.uni.GradeCenter.service.TeacherService;
@@ -27,11 +30,13 @@ public class TeacherController {
     private final TeacherService teacherService;
     private final ScheduleService scheduleService;
     private final GradeService gradeService;
+    private final AbsenceService absenceService;
 
-    public TeacherController(TeacherService teacherService, ScheduleService scheduleService, GradeService gradeService) {
+    public TeacherController(TeacherService teacherService, ScheduleService scheduleService, GradeService gradeService, AbsenceService absenceService) {
         this.teacherService = teacherService;
         this.scheduleService = scheduleService;
         this.gradeService = gradeService;
+        this.absenceService = absenceService;
     }
 
     @GetMapping("/grades")
@@ -58,7 +63,12 @@ public class TeacherController {
                     List<GradeViewDTO> gradeDTOs = studentGrades.stream()
                             .map(g -> new GradeViewDTO(g.getId(), g.getValue()))
                             .collect(Collectors.toList());
-                    dto.setGrades(gradeDTOs);
+
+                    if (!gradeDTOs.isEmpty()) {
+                        dto.setGrades(gradeDTOs);
+                    } else {
+                        dto.setGrades(new ArrayList<>());
+                    }
 
                     gradeEntries.add(dto);
                 }
@@ -138,5 +148,84 @@ public class TeacherController {
 
         gradeService.updateGradeFrontend(dto);
         return "redirect:/teacher/grades";
+    }
+
+    @GetMapping("/absences")
+    public String absences(Model model, Principal principal) {
+        Teacher teacher = teacherService.findByUsername(principal.getName());
+
+        List<AbsenceEntryViewDTO> absenceEntries = new ArrayList<>();
+
+        for (Subject subject : teacher.getQualifiedSubjects()) {
+            List<Schedule> schedules = scheduleService.findByTeacherAndSubject(teacher, subject);
+            for (Schedule schedule : schedules) {
+                Classroom classroom = schedule.getClassroom();
+                for (Student student : classroom.getStudents()) {
+                    AbsenceEntryViewDTO dto = new AbsenceEntryViewDTO();
+                    dto.setSchoolName(classroom.getSchool().getName());
+                    dto.setClassroomName(classroom.getName());
+                    dto.setClassroomId(classroom.getId());
+                    dto.setStudentFullName(student.getUser().getFirstName() + " " + student.getUser().getLastName());
+                    dto.setStudentId(student.getId());
+                    dto.setSubjectName(subject.getName());
+                    dto.setSubjectId(subject.getId());
+
+                    Absence absence = absenceService.findByStudentAndSubject(student, subject);
+
+                    if (absence != null) {
+                        dto.setAbsenceDate(absence.getDate());
+                    } else {
+                        dto.setAbsenceDate(null);
+                    }
+
+                    absenceEntries.add(dto);
+                }
+            }
+        }
+
+        model.addAttribute("absenceEntries", absenceEntries);
+
+        return "teacher-absences";
+    }
+
+    @GetMapping("/absence/create")
+    public String showAbsenceForm(@RequestParam Long classroomId,
+                                  @RequestParam String classroomName,
+                                  @RequestParam Long studentId,
+                                  @RequestParam String studentName,
+                                  @RequestParam Long subjectId,
+                                  @RequestParam String subjectName,
+                                  Model model) {
+        AbsenceCreateBindingDTO dto = new AbsenceCreateBindingDTO();
+        dto.setClassroomId(classroomId);
+        dto.setClassroomName(classroomName);
+        dto.setStudentId(studentId);
+        dto.setStudentName(studentName);
+        dto.setSubjectId(subjectId);
+        dto.setSubjectName(subjectName);
+        model.addAttribute("createAbsenceBindingDTO", dto);
+
+        return "teacher-absence-create";
+    }
+
+    @PostMapping("/absence/create")
+    public String submitAbsence(@Valid @ModelAttribute("createAbsenceBindingDTO") AbsenceCreateBindingDTO dto,
+                                BindingResult bindingResult,
+                                RedirectAttributes redirectAttributes, Principal principal) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("createAbsenceBindingDTO", dto);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.createAbsenceBindingDTO", bindingResult);
+            return "redirect:/teacher/absence/create?classroomId=" + dto.getClassroomId()
+                    + "&classroomName=" + dto.getClassroomName()
+                    + "&studentId=" + dto.getStudentId()
+                    + "&studentName=" + dto.getStudentName()
+                    + "&subjectId=" + dto.getSubjectId()
+                    + "&subjectName=" + dto.getSubjectName();
+        }
+
+        absenceService.createAbsenceFrontend(dto, principal.getName());
+
+        redirectAttributes.addFlashAttribute("successMessage", "Отсъствието беше записано успешно.");
+        return "redirect:/teacher/absences";
     }
 }

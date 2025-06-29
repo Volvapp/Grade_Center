@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Управление на отсъствия</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #e8f5e9;
+            padding: 2rem;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1b5e20;
+        }
+
+        .table-container {
+            max-width: 1200px;
+            margin: auto;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(56, 142, 60, 0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            font-size: 0.95rem;
+        }
+
+        thead tr {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        tbody tr {
+            background-color: #f1f8e9;
+            transition: background-color 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #dcedc8;
+        }
+
+        .create-button {
+            background-color: #66bb6a;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .create-button:hover {
+            background-color: #4caf50;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+            border-radius: 8px;
+            padding: 6px 12px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-button:hover {
+            background-color: #2e7d32;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Управление на отсъствия</h1>
+
+<a href="/" class="back-button">← Начало</a>
+
+<div class="table-container">
+    <table>
+        <thead>
+        <tr>
+            <th>Училище</th>
+            <th>Клас</th>
+            <th>Ученик</th>
+            <th>Предмет</th>
+            <th>Отсъствие</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${absenceEntries}">
+            <td th:text="${entry.schoolName}">Училище</td>
+            <td th:text="${entry.classroomName}">Клас</td>
+            <td th:text="${entry.studentFullName}">Ученик</td>
+            <td th:text="${entry.subjectName}">Предмет</td>
+            <td th:text="${entry.absenceDate}">Отсъствие</td>
+            <td>
+            <span th:if="${entry.absenceDate != null}" style="color: #c62828; font-weight: bold;">
+            Има налично отсъствие
+            </span>
+                <a th:if="${entry.absenceDate == null}" class="create-button"
+                   th:href="@{'/teacher/absence/create'(classroomId=${entry.classroomId},
+                                                classroomName=${entry.classroomName},
+                                                studentId=${entry.studentId},
+                                                studentName=${entry.studentFullName},
+                                                subjectId=${entry.subjectId},
+                                                subjectName=${entry.subjectName})}">
+                    Въведи отсъствие
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

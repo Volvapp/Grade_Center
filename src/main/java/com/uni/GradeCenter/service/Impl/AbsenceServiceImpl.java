@@ -4,11 +4,13 @@ import com.uni.GradeCenter.model.Absence;
 import com.uni.GradeCenter.model.Student;
 import com.uni.GradeCenter.model.Subject;
 import com.uni.GradeCenter.model.Teacher;
+import com.uni.GradeCenter.model.dto.bindingDTOs.AbsenceCreateBindingDTO;
 import com.uni.GradeCenter.repository.AbsenceRepository;
 import com.uni.GradeCenter.repository.StudentRepository;
 import com.uni.GradeCenter.repository.TeacherRepository;
 import com.uni.GradeCenter.service.AbsenceService;
 import com.uni.GradeCenter.service.StudentService;
+import com.uni.GradeCenter.service.SubjectService;
 import com.uni.GradeCenter.service.TeacherService;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +23,13 @@ public class AbsenceServiceImpl implements AbsenceService {
     private final AbsenceRepository absenceRepository;
     private final StudentService studentService;
     private final TeacherService teacherService;
+    private final SubjectService subjectService;
 
-    public AbsenceServiceImpl(AbsenceRepository absenceRepository, StudentService studentService, TeacherService teacherService) {
+    public AbsenceServiceImpl(AbsenceRepository absenceRepository, StudentService studentService, TeacherService teacherService, SubjectService subjectService) {
         this.absenceRepository = absenceRepository;
         this.studentService = studentService;
         this.teacherService = teacherService;
+        this.subjectService = subjectService;
     }
 
     @Override
@@ -76,6 +80,23 @@ public class AbsenceServiceImpl implements AbsenceService {
                 teacher,
                 LocalDate.now().minusDays(1)
         );
+
+        absenceRepository.save(absence);
+    }
+
+    @Override
+    public Absence findByStudentAndSubject(Student student, Subject subject) {
+        Absence absence = absenceRepository.findByStudentAndSubject(student, subject);
+        return absence;
+    }
+
+    @Override
+    public void createAbsenceFrontend(AbsenceCreateBindingDTO dto, String name) {
+        Teacher teacher = teacherService.findByUsername(name);
+        Student student = studentService.getStudentById(dto.getStudentId());
+        Subject subject = subjectService.getSubjectById(dto.getSubjectId());
+
+        Absence absence = new Absence(student,subject, teacher, dto.getDate());
 
         absenceRepository.save(absence);
     }
