@@ -1,8 +1,8 @@
 package com.uni.GradeCenter.service.Impl;
 
-import com.uni.GradeCenter.model.School;
-import com.uni.GradeCenter.model.User;
+import com.uni.GradeCenter.model.*;
 import com.uni.GradeCenter.model.dto.SchoolDTO;
+import com.uni.GradeCenter.model.dto.viewDTOs.SubjectViewDTO;
 import com.uni.GradeCenter.model.enums.Role;
 import com.uni.GradeCenter.repository.SchoolRepository;
 import com.uni.GradeCenter.repository.UserRepository;
@@ -12,10 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -109,6 +106,53 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     public Optional<School> findBySchoolName(String firstLanguageSchool) {
         return schoolRepository.findByName(firstLanguageSchool);
+    }
+
+    @Override
+    public Map<Long, List<SubjectViewDTO>> getSchoolStatistics() {
+        List<School> schools = getAllSchools();
+        Map<Long, List<SubjectViewDTO>> schoolStats = new HashMap<>();
+
+        for (School school : schools) {
+            List<Subject> subjects = school.getSubjects();
+            List<Student> students = school.getStudents();
+
+            List<SubjectViewDTO> statsForSchool = new ArrayList<>();
+
+            for (Subject subject : subjects) {
+                double sum = 0;
+                int count = 0;
+                int absences = 0;
+
+                for (Student student : students) {
+                    for (Grade grade : student.getGrades()) {
+                        if (grade.getSubject().getId().equals(subject.getId())) {
+                            sum += grade.getValue();
+                            count++;
+                        }
+                    }
+
+                    for (Absence absence : student.getAbsences()) {
+                        if (absence.getSubject().getId().equals(subject.getId())) {
+                            absences++;
+                        }
+                    }
+                }
+
+                double average = count > 0 ? sum / count : 0;
+
+                SubjectViewDTO stat = new SubjectViewDTO();
+                stat.setName(subject.getName());
+                stat.setAverageGrade(average);
+                stat.setTotalAbsences(absences);
+
+                statsForSchool.add(stat);
+            }
+
+            schoolStats.put(school.getId(), statsForSchool);
+        }
+
+        return schoolStats;
     }
 
     private SchoolDTO convertToDTO(School school) {

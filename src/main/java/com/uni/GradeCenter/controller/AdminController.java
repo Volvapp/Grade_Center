@@ -7,6 +7,7 @@ import com.uni.GradeCenter.model.dto.bindingDTOs.CreateScheduleBindingDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateSchoolBindingDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateSubjectBindingDTO;
 import com.uni.GradeCenter.model.dto.viewDTOs.ClassroomViewDTO;
+import com.uni.GradeCenter.model.dto.viewDTOs.SubjectViewDTO;
 import com.uni.GradeCenter.model.enums.Role;
 import com.uni.GradeCenter.service.*;
 import jakarta.validation.Valid;
@@ -19,10 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -401,5 +399,14 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/statistics")
+    public String showSchoolsInfo(Model model) {
+        List<School> schools = schoolService.getAllSchools();
+        Map<Long, List<SubjectViewDTO>> schoolStats = schoolService.getSchoolStatistics();
+
+        model.addAttribute("schools", schools);
+        model.addAttribute("schoolStats", schoolStats);
+        return "admin-statistics";
+    }
 
 }

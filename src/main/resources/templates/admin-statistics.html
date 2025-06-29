@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация за училища</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Иконки -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --main-green: #2e7d32;
+            --light-green: #66bb6a;
+            --dark-green: #1b5e20;
+            --bg-light: #f1f8e9;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: var(--main-green);
+            color: white;
+            font-weight: bold;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+        }
+
+        .section-title {
+            color: var(--dark-green);
+            margin-top: 2rem;
+            font-weight: bold;
+        }
+
+        .btn-back {
+            background-color: var(--main-green);
+            color: white;
+            border-radius: 25px;
+            padding: 0.4rem 1.2rem;
+            font-weight: 500;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: var(--light-green);
+            color: white;
+        }
+
+        .back-container {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .table-responsive {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+
+    <!-- Бутон за връщане -->
+    <div class="back-container">
+        <a href="/" class="btn btn-back">
+            <i class="bi bi-arrow-left-circle"></i> Назад
+        </a>
+    </div>
+
+    <h1 class="text-center mb-4 text-success">Училища - Информация и Статистики</h1>
+
+    <div th:each="school : ${schools}" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h3 th:text="${school.name}">Име на училище</h3>
+            </div>
+            <div class="card-body bg-white">
+                <p><strong>Адрес:</strong> <span th:text="${school.address}">ул. Примерна 1</span></p>
+                <p><strong>Директор:</strong>
+                    <span th:text="${school.director != null ? school.director.firstName + ' ' + school.director.lastName : 'Няма директор'}"></span>
+                </p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="section-title">Учители</h5>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item" th:each="teacher : ${school.teachers}" th:text="${teacher.user.firstName + ' ' + teacher.user.lastName}">Име на учител</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="section-title">Ученици</h5>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item" th:each="student : ${school.students}" th:text="${student.user.firstName + ' ' + student.user.lastName}">Име на ученик</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="section-title">Предмети</h5>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item" th:each="subject : ${school.subjects}" th:text="${subject.name}">Математика</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="section-title">Класове</h5>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item" th:each="classroom : ${school.classrooms}" th:text="${classroom.name + ' - ' + classroom.grade + ' клас'}"></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h5 class="section-title">Статистика</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center align-middle">
+                        <thead class="table-success">
+                        <tr>
+                            <th>Предмет</th>
+                            <th>Средна оценка</th>
+                            <th>Общ брой отсъствия</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="subjectStat : ${schoolStats[school.id]}">
+                            <td th:text="${subjectStat.name}">Математика</td>
+                            <td th:text="${T(java.lang.String).format('%.2f', subjectStat.averageGrade)}">4.56</td>
+                            <td th:text="${subjectStat.totalAbsences}">8</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
