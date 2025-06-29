@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Резултати на Детето</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --main-green: #2e7d32;
+            --light-green: #66bb6a;
+            --bg: #f1f8e9;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            padding: 20px;
+        }
+
+        a.back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: var(--main-green);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        a.back-button:hover {
+            background-color: var(--light-green);
+        }
+
+        h1 {
+            color: var(--main-green);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .section {
+            background-color: var(--white);
+            border: 1px solid #c8e6c9;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.1);
+        }
+
+        .section h2 {
+            color: var(--main-green);
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table thead {
+            background-color: var(--light-green);
+            color: var(--white);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #e8f5e9;
+        }
+
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tr {
+                margin-bottom: 15px;
+            }
+
+            td {
+                padding: 10px;
+                border: none;
+                position: relative;
+            }
+
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: block;
+                margin-bottom: 5px;
+                color: var(--main-green);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<a href="/" class="back-button">← Назад</a>
+
+<h1>Резултати на Детето</h1>
+
+<p style="text-align: center; font-size: 1.2rem; color: #2e7d32; margin-bottom: 30px;">
+    Показани резултати за: <strong th:text="${parent.child.user.firstName + ' ' + parent.child.user.lastName}">Име на детето</strong>
+</p>
+
+<div class="container">
+
+    <div class="section">
+        <h2>Оценки</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Предмет</th>
+                <th>Оценка</th>
+                <th>Дата</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="grade : ${parent.child.grades}">
+                <td th:text="${grade.subject.name}" data-label="Предмет"></td>
+                <td th:text="${grade.value}" data-label="Оценка"></td>
+                <td th:text="${grade.date}" data-label="Дата"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Отсъствия</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Предмет</th>
+                <th>Преподавател</th>
+                <th>Дата</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="absence : ${parent.child.absences}">
+                <td th:text="${absence.subject.name}" data-label="Предмет"></td>
+                <td th:text="${absence.teacher.user.firstName + ' ' + absence.teacher.user.lastName}" data-label="Преподавател"></td>
+                <td th:text="${absence.date}" data-label="Дата"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

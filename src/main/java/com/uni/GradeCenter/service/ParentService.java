@@ -9,6 +9,8 @@ public interface ParentService {
 
     Parent getParentById(Long id);
 
+    Parent getParentByUserId(Long id);
+
     Parent updateParent(Parent parent);
 
     void deleteParentById(Long id);

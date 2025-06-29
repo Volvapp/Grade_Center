@@ -243,18 +243,9 @@
         <li th:if="${#authorization.expression('hasRole(''PARENT'')')}">
             <a th:href="@{/parent/child}" class="nav-link-button">Информация за детето</a>
         </li>
-        <li th:if="${#authorization.expression('hasRole(''PARENT'')')}">
-            <a th:href="@{/parent/grades}" class="nav-link-button">Оценки на детето</a>
-        </li>
-        <li th:if="${#authorization.expression('hasRole(''PARENT'')')}">
-            <a th:href="@{/parent/absences}" class="nav-link-button">Отсъствия на детето</a>
-        </li>
 
         <li th:if="${#authorization.expression('hasRole(''STUDENT'')')}">
-            <a th:href="@{/student/grades}" class="nav-link-button">Моите оценки</a>
-        </li>
-        <li th:if="${#authorization.expression('hasRole(''STUDENT'')')}">
-            <a th:href="@{/student/absences}" class="nav-link-button">Моите отсъствия</a>
+            <a th:href="@{/student/statistics}" class="nav-link-button">Оценки и отсъствия</a>
         </li>
 
         <li th:if="${#authorization.expression('isAuthenticated()')}">

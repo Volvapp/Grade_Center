@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ParentRepository extends JpaRepository<Parent, Long> {
     void deleteByUser_Id(Long id);
+
+    Parent findByUser_Id(Long id);
 }

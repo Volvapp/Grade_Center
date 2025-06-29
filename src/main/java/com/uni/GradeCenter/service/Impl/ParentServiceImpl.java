@@ -37,6 +37,11 @@ public class ParentServiceImpl implements ParentService {
     }
 
     @Override
+    public Parent getParentByUserId(Long id) {
+        return this.parentRepository.findByUser_Id(id);
+    }
+
+    @Override
     public Parent updateParent(Parent parent) {
         return parentRepository.save(parent);
     }
