@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Програма на ученика</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --secondary: #a5d6a7;
+            --bg: #f1f8e9;
+            --text: #1b5e20;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            padding: 2rem;
+            color: var(--text);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            padding: 0.6rem 1.2rem;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .back-btn:hover {
+            background-color: #1b5e20;
+        }
+
+        .day-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .day-section h2 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.3rem;
+        }
+
+        .schedule-container {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .schedule-card {
+            background-color: var(--card-bg);
+            border-left: 6px solid var(--primary);
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .schedule-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .schedule-card h3 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .schedule-info {
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .schedule-info span {
+            display: block;
+            margin-top: 0.3rem;
+        }
+
+        .teacher-name {
+            margin-top: 1rem;
+            font-weight: bold;
+            color: #388e3c;
+        }
+
+        @media (max-width: 600px) {
+            .schedule-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .schedule-info {
+                font-size: 0.9rem;
+            }
+
+            .teacher-name {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}" class="back-btn">← Назад</a>
+
+<h1>Програма</h1>
+
+<!-- Секция за всеки ден от седмицата -->
+<div class="day-section" th:each="day : ${T(java.util.List).of('MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY')}">
+    <h2 th:text="${#strings.capitalize(day.toLowerCase())}">Ден</h2>
+
+    <div class="schedule-container">
+        <div class="schedule-card"
+             th:each="schedule : ${schedules}"
+             th:if="${schedule.dayOfWeek.name() == day}">
+            <h3 th:text="${schedule.name}">Предмет</h3>
+            <div class="schedule-info">
+                <span th:text="'Начало: ' + ${#temporals.format(schedule.startTime, 'HH:mm')}">Начало</span>
+                <span th:text="'Край: ' + ${#temporals.format(schedule.endTime, 'HH:mm')}">Край</span>
+                <span class="teacher-name" th:text="'Преподавател: ' + ${schedule.teacherName}">Преподавател</span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

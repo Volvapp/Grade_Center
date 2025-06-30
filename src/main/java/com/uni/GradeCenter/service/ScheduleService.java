@@ -6,6 +6,7 @@ import com.uni.GradeCenter.model.Subject;
 import com.uni.GradeCenter.model.Teacher;
 import com.uni.GradeCenter.model.dto.AvailableSlotDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateScheduleBindingDTO;
+import com.uni.GradeCenter.model.dto.viewDTOs.ScheduleViewDTO;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -34,4 +35,6 @@ public interface ScheduleService {
     void createScheduleFrontend(CreateScheduleBindingDTO dto);
 
     List<Schedule> findByTeacherAndSubject(Teacher teacher, Subject subject);
+
+    List<ScheduleViewDTO> mapToView(List<Schedule> schedules);
 }

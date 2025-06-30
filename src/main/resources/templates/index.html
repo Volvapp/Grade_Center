@@ -235,6 +235,9 @@
         <li th:if="${#authorization.expression('hasRole(''STUDENT'')')}">
             <a th:href="@{/student/statistics}" class="nav-link-button">Оценки и отсъствия</a>
         </li>
+        <li th:if="${#authorization.expression('hasRole(''STUDENT'')')}">
+            <a th:href="@{/student/schedule}" class="nav-link-button">Програма</a>
+        </li>
 
         <li th:if="${#authorization.expression('isAuthenticated()')}">
             <form th:action="@{/logout}" method="post" style="display:inline;">

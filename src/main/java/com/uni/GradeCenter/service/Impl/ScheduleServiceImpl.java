@@ -6,6 +6,7 @@ import com.uni.GradeCenter.model.Subject;
 import com.uni.GradeCenter.model.Teacher;
 import com.uni.GradeCenter.model.dto.AvailableSlotDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateScheduleBindingDTO;
+import com.uni.GradeCenter.model.dto.viewDTOs.ScheduleViewDTO;
 import com.uni.GradeCenter.repository.ClassroomRepository;
 import com.uni.GradeCenter.repository.ScheduleRepository;
 import com.uni.GradeCenter.repository.TeacherRepository;
@@ -182,4 +183,21 @@ public class ScheduleServiceImpl implements ScheduleService {
     public List<Schedule> findByTeacherAndSubject(Teacher teacher, Subject subject) {
         return scheduleRepository.findByTeacherAndSubject(teacher, subject);
     }
+
+    @Override
+    public List<ScheduleViewDTO> mapToView(List<Schedule> schedules) {
+        return schedules.stream()
+                .map(schedule -> new ScheduleViewDTO(
+                        schedule.getSubject().getName(),
+                        schedule.getDayOfWeek(),
+                        schedule.getStartTime(),
+                        schedule.getEndTime(),
+                        schedule.getTeacher().getUser().getFirstName() + " " + schedule.getTeacher().getUser().getLastName()
+                ))
+                .sorted(Comparator
+                        .comparing(ScheduleViewDTO::getDayOfWeek)
+                        .thenComparing(ScheduleViewDTO::getStartTime))
+                .toList();
+    }
+
 }
