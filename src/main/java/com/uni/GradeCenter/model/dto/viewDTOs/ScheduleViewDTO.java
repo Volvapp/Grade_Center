@@ -9,6 +9,7 @@ public class ScheduleViewDTO {
     private LocalTime startTime;
     private LocalTime endTime;
     private String teacherName;
+    private String className;
 
     public ScheduleViewDTO(String name, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, String teacherName) {
         this.name = name;
@@ -16,6 +17,15 @@ public class ScheduleViewDTO {
         this.startTime = startTime;
         this.endTime = endTime;
         this.teacherName = teacherName;
+    }
+
+    public ScheduleViewDTO(String name, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, String teacherName, String className) {
+        this.name = name;
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.teacherName = teacherName;
+        this.className = className;
     }
 
     public ScheduleViewDTO() {
@@ -59,5 +69,13 @@ public class ScheduleViewDTO {
 
     public void setTeacherName(String teacherName) {
         this.teacherName = teacherName;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

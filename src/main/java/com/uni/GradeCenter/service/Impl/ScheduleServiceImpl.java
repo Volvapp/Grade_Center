@@ -192,7 +192,8 @@ public class ScheduleServiceImpl implements ScheduleService {
                         schedule.getDayOfWeek(),
                         schedule.getStartTime(),
                         schedule.getEndTime(),
-                        schedule.getTeacher().getUser().getFirstName() + " " + schedule.getTeacher().getUser().getLastName()
+                        schedule.getTeacher().getUser().getFirstName() + " " + schedule.getTeacher().getUser().getLastName(),
+                        schedule.getClassroom().getName()
                 ))
                 .sorted(Comparator
                         .comparing(ScheduleViewDTO::getDayOfWeek)

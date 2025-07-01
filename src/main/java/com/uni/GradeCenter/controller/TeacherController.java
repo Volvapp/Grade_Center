@@ -5,10 +5,7 @@ import com.uni.GradeCenter.model.dto.bindingDTOs.CreateGradeBindingDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.EditGradeBindingDTO;
 import com.uni.GradeCenter.model.dto.viewDTOs.AbsenceEntryViewDTO;
 import com.uni.GradeCenter.model.dto.viewDTOs.GradeViewDTO;
-import com.uni.GradeCenter.service.AbsenceService;
-import com.uni.GradeCenter.service.GradeService;
-import com.uni.GradeCenter.service.ScheduleService;
-import com.uni.GradeCenter.service.TeacherService;
+import com.uni.GradeCenter.service.*;
 import jakarta.validation.Valid;
 import org.springframework.ui.Model;
 import com.uni.GradeCenter.model.*;
@@ -31,12 +28,14 @@ public class TeacherController {
     private final ScheduleService scheduleService;
     private final GradeService gradeService;
     private final AbsenceService absenceService;
+    private final UserService userService;
 
-    public TeacherController(TeacherService teacherService, ScheduleService scheduleService, GradeService gradeService, AbsenceService absenceService) {
+    public TeacherController(TeacherService teacherService, ScheduleService scheduleService, GradeService gradeService, AbsenceService absenceService, UserService userService) {
         this.teacherService = teacherService;
         this.scheduleService = scheduleService;
         this.gradeService = gradeService;
         this.absenceService = absenceService;
+        this.userService = userService;
     }
 
     @GetMapping("/grades")
@@ -227,5 +226,15 @@ public class TeacherController {
 
         redirectAttributes.addFlashAttribute("successMessage", "Отсъствието беше записано успешно.");
         return "redirect:/teacher/absences";
+    }
+
+    @GetMapping("/schedule")
+    public String schedule(Model model, Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        Teacher teacher = teacherService.getTeacherByUserId(user.getId());
+
+        model.addAttribute("schedules", scheduleService.mapToView(teacher.getSchedules()));
+
+        return "teacher-schedule";
     }
 }
