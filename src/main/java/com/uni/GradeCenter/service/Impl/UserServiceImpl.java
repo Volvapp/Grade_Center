@@ -19,16 +19,14 @@ public class UserServiceImpl implements UserService {
     private final TeacherService teacherService;
     private final StudentService studentService;
     private final ParentService parentService;
-    private final SchoolService schoolService;
     private final AbsenceService absenceService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, TeacherService teacherService, StudentService studentService, ParentService parentService, SchoolService schoolService, AbsenceService absenceService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, TeacherService teacherService, StudentService studentService, ParentService parentService, AbsenceService absenceService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.teacherService = teacherService;
         this.studentService = studentService;
         this.parentService = parentService;
-        this.schoolService = schoolService;
         this.absenceService = absenceService;
     }
 
@@ -210,6 +208,4 @@ public class UserServiceImpl implements UserService {
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username);
     }
-
-
 }
