@@ -174,13 +174,14 @@ public class AdminController {
             @RequestParam String email,
             @RequestParam String username,
             @RequestParam Long schoolId,
-            @RequestParam Long classroomId,
+            @RequestParam(required = false) Long classroomId,
             RedirectAttributes redirectAttributes
     ) {
         studentService.updateStudentInline(id, firstName, lastName, email, username, schoolId, classroomId);
         redirectAttributes.addFlashAttribute("successMessage", "Ученикът е обновен успешно.");
         return "redirect:/admin/students";
     }
+
 
     @GetMapping("/parents")
     public String parents(Model model) {
@@ -277,10 +278,14 @@ public class AdminController {
         }
 
         School school = schoolService.getSchoolById(classroomDTO.getSchoolId());
+        if (!classroomService.checkAvailability(classroomDTO, school)) {
+            model.addAttribute("takenMessage", "Паралелка с това име съществува!");
+            model.addAttribute("schools", schoolService.getAllSchools());
+            return "admin-schools-classroom-create";
+        }
 
         Classroom classroom = new Classroom();
         classroom.setName(classroomDTO.getName());
-        // TODO proverka za sushtestvuvashta staq s tova ime
         classroom.setGrade(classroomDTO.getGrade());
         classroom.setSchool(school);
 
@@ -289,6 +294,7 @@ public class AdminController {
         redirectAttributes.addFlashAttribute("successMessage", "Паралелката е създадена успешно.");
         return "redirect:/admin/schools";
     }
+
 
 
     @GetMapping("/subjects/create")
@@ -311,7 +317,8 @@ public class AdminController {
     ) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("createSubjectBindingDTO", createSubjectBindingDTO);
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.createSubjectBindingDTO", bindingResult);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.createSubjectBindingDTO",
+                    bindingResult);
             return "redirect:/admin/subjects/create";
         }
 
@@ -414,7 +421,6 @@ public class AdminController {
     public String showSchoolsInfo(Model model) {
         List<School> schools = schoolService.getAllSchools();
         Map<Long, List<SubjectViewDTO>> schoolStats = schoolService.getSchoolStatistics();
-
         model.addAttribute("schools", schools);
         model.addAttribute("schoolStats", schoolStats);
         return "admin-statistics";

@@ -100,7 +100,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void updateStudentInline(Long id, String firstName, String lastName, String email, String username, Long schoolId, Long classroomId) {
+    public void updateStudentInline(Long id, String firstName, String lastName, String email, String username,
+                                    Long schoolId, Long classroomId) {
         Student student = studentRepository.findById(id).orElseThrow();
         User user = student.getUser();
 
@@ -111,8 +112,9 @@ public class StudentServiceImpl implements StudentService {
         userService.updateUser(user);
 
         student.setSchool(schoolService.getSchoolById(schoolId));
-        Classroom newClassroom = classroomService.getClassroomById(classroomId);
+
         Classroom oldClassroom = student.getClassroom();
+        Classroom newClassroom = (classroomId != null) ? classroomService.getClassroomById(classroomId) : null;
 
         if (oldClassroom != null) {
             oldClassroom.getStudents().remove(student);
@@ -126,6 +128,7 @@ public class StudentServiceImpl implements StudentService {
 
         studentRepository.save(student);
     }
+
 
 
     @Override

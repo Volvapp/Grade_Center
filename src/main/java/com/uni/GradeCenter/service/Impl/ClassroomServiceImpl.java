@@ -2,9 +2,9 @@ package com.uni.GradeCenter.service.Impl;
 
 import com.uni.GradeCenter.model.Classroom;
 import com.uni.GradeCenter.model.School;
+import com.uni.GradeCenter.model.dto.ClassroomDTO;
 import com.uni.GradeCenter.model.dto.viewDTOs.ClassroomViewDTO;
 import com.uni.GradeCenter.repository.ClassroomRepository;
-import com.uni.GradeCenter.repository.SchoolRepository;
 import com.uni.GradeCenter.service.ClassroomService;
 import com.uni.GradeCenter.service.SchoolService;
 import org.springframework.stereotype.Service;
@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 @Service
 public class ClassroomServiceImpl implements ClassroomService {
@@ -127,5 +124,12 @@ public class ClassroomServiceImpl implements ClassroomService {
         }
 
         return classroomViewDTOs;
+    }
+
+    @Override
+    public boolean checkAvailability(ClassroomDTO classroomDTO, School school) {
+       return school.getClassrooms()
+                .stream()
+                .anyMatch(classroom -> classroom.getName().equals(classroomDTO.getName()));
     }
 }

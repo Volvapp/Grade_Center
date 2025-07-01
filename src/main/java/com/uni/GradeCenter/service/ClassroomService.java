@@ -1,6 +1,8 @@
 package com.uni.GradeCenter.service;
 
 import com.uni.GradeCenter.model.Classroom;
+import com.uni.GradeCenter.model.School;
+import com.uni.GradeCenter.model.dto.ClassroomDTO;
 import com.uni.GradeCenter.model.dto.viewDTOs.ClassroomViewDTO;
 
 import java.util.Collection;
@@ -26,4 +28,6 @@ public interface ClassroomService {
     List<Classroom> findClassroomsBySchoolId(Long schoolId);
 
     List<ClassroomViewDTO> getAllClassroomViewDTOs();
+
+    boolean checkAvailability(ClassroomDTO classroomDTO, School school);
 }

@@ -299,7 +299,8 @@
                 </select>
             </td>
             <td data-label="Клас">
-                <select name="classroomId" required>
+                <select name="classroomId">
+                    <option value="">-- Няма избрана паралелка --</option>
                     <option th:each="classroom : ${classrooms}"
                             th:value="${classroom.id}"
                             th:text="${classroom.name}"
@@ -307,7 +308,9 @@
                             th:selected="${student.classroom != null and student.classroom.id == classroom.id}">
                     </option>
                 </select>
+
             </td>
+
             <td data-label="Действия">
                 <button type="submit" class="btn-edit" aria-label="Запази промените">Запази</button>
             </td>

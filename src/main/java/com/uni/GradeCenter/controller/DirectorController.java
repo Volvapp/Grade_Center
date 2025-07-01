@@ -49,7 +49,6 @@ public class DirectorController {
                 .toList();
 
         model.addAttribute("parents", parents);
-        // Примерна статистика:
         Map<String, Long> gradesPerSubject = gradeService.countGradesPerSubjectForSchool(school.getId());
         Map<String, Double> averagePerTeacher = gradeService.averageGradesPerTeacherForSchool(school.getId());
         Double overallAverage = gradeService.calculateOverallAverageForSchool(school.getId());
