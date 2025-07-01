@@ -235,7 +235,9 @@ public class AdminController {
             RedirectAttributes redirectAttributes
     ) {
         Teacher teacher = teacherService.getTeacherById(id);
-
+        if (teacher.getSchool() == null) {
+            teacher.setSchool(schoolService.getSchoolById(schoolId));
+        }
         if (teacher.getSchool().getId() != schoolId) {
             teacher.setQualifiedSubjects(new ArrayList<>());
         }
@@ -278,6 +280,7 @@ public class AdminController {
 
         Classroom classroom = new Classroom();
         classroom.setName(classroomDTO.getName());
+        // TODO proverka za sushtestvuvashta staq s tova ime
         classroom.setGrade(classroomDTO.getGrade());
         classroom.setSchool(school);
 

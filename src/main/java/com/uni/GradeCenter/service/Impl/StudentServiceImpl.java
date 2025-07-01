@@ -111,7 +111,6 @@ public class StudentServiceImpl implements StudentService {
         userService.updateUser(user);
 
         student.setSchool(schoolService.getSchoolById(schoolId));
-
         Classroom newClassroom = classroomService.getClassroomById(classroomId);
         Classroom oldClassroom = student.getClassroom();
 

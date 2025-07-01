@@ -279,15 +279,15 @@
         <form th:action="@{'/admin/students/edit/' + ${student.id}}" method="post">
             <td data-label="Име">
                 <div class="name-fields">
-                    <input type="text" name="firstName" th:value="${student.user.firstName}" required placeholder="Име" />
-                    <input type="text" name="lastName" th:value="${student.user.lastName}" required placeholder="Фамилия" />
+                    <input type="text" name="firstName" th:value="${student.user.firstName}" required placeholder="Име" readonly />
+                    <input type="text" name="lastName" th:value="${student.user.lastName}" required placeholder="Фамилия" readonly />
                 </div>
             </td>
             <td data-label="Имейл">
-                <input type="email" name="email" th:value="${student.user.email}" required placeholder="email@example.com" />
+                <input type="email" name="email" th:value="${student.user.email}" required placeholder="email@example.com" readonly />
             </td>
             <td data-label="Потребителско име">
-                <input type="text" name="username" th:value="${student.user.username}" required placeholder="Потребителско име" />
+                <input type="text" name="username" th:value="${student.user.username}" required placeholder="Потребителско име" readonly />
             </td>
             <td data-label="Училище">
                 <select name="schoolId" required>
@@ -307,8 +307,6 @@
                             th:selected="${student.classroom != null and student.classroom.id == classroom.id}">
                     </option>
                 </select>
-
-
             </td>
             <td data-label="Действия">
                 <button type="submit" class="btn-edit" aria-label="Запази промените">Запази</button>
@@ -316,6 +314,7 @@
         </form>
     </tr>
     </tbody>
+
 </table>
 
 <div id="save-message" style="display:none;"></div>
