@@ -17,7 +17,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -41,14 +43,22 @@ public class TeacherController {
     @GetMapping("/grades")
     public String grades(Model model, Principal principal) {
         Teacher teacher = teacherService.findByUsername(principal.getName());
-
         List<GradeEntryViewDTO> gradeEntries = new ArrayList<>();
+
+        // Използваме Set, за да пазим уникални комбинации "studentId:subjectId"
+        Set<String> seenStudentSubjectPairs = new HashSet<>();
 
         for (Subject subject : teacher.getQualifiedSubjects()) {
             List<Schedule> schedules = scheduleService.findByTeacherAndSubject(teacher, subject);
             for (Schedule schedule : schedules) {
                 Classroom classroom = schedule.getClassroom();
                 for (Student student : classroom.getStudents()) {
+                    String uniqueKey = student.getId() + ":" + subject.getId();
+                    if (seenStudentSubjectPairs.contains(uniqueKey)) {
+                        continue; // вече сме добавили тази комбинация
+                    }
+                    seenStudentSubjectPairs.add(uniqueKey);
+
                     GradeEntryViewDTO dto = new GradeEntryViewDTO();
                     dto.setSchoolName(classroom.getSchool().getName());
                     dto.setClassroomName(classroom.getName());
@@ -63,19 +73,13 @@ public class TeacherController {
                             .map(g -> new GradeViewDTO(g.getId(), g.getValue()))
                             .collect(Collectors.toList());
 
-                    if (!gradeDTOs.isEmpty()) {
-                        dto.setGrades(gradeDTOs);
-                    } else {
-                        dto.setGrades(new ArrayList<>());
-                    }
-
+                    dto.setGrades(gradeDTOs);
                     gradeEntries.add(dto);
                 }
             }
         }
 
         model.addAttribute("gradeEntries", gradeEntries);
-
         return "teacher-grades";
     }
 
