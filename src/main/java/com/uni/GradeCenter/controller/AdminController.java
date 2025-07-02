@@ -289,7 +289,7 @@ public class AdminController {
         }
 
         School school = schoolService.getSchoolById(classroomDTO.getSchoolId());
-        if (!classroomService.checkAvailability(classroomDTO, school)) {
+        if (classroomService.checkAvailability(classroomDTO, school)) {
             model.addAttribute("takenMessage", "Паралелка с това име съществува!");
             model.addAttribute("schools", schoolService.getAllSchools());
             return "admin-schools-classroom-create";
