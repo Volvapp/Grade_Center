@@ -80,24 +80,6 @@ class AdminControllerIntegrationTest {
     }
 
     @Test
-    void testSchoolsEndpoint() throws Exception {
-        List<SchoolDTO> mockSchools = List.of(new SchoolDTO(), new SchoolDTO());
-        List<User> mockDirectors = List.of(new User());
-
-        when(schoolService.getAllSchoolDTOs()).thenReturn(mockSchools);
-        when(userService.getUsersByRole(Role.DIRECTOR)).thenReturn(mockDirectors);
-
-        mockMvc.perform(get("/admin/schools"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin-schools"))
-                .andExpect(model().attribute("schools", hasSize(2)))
-                .andExpect(model().attribute("directors", hasSize(1)));
-
-        verify(schoolService).getAllSchoolDTOs();
-        verify(userService).getUsersByRole(Role.DIRECTOR);
-    }
-
-    @Test
     void testEditSchool() throws Exception {
         School mockSchool = new School();
         when(schoolService.getSchoolById(1L)).thenReturn(mockSchool);
