@@ -176,6 +176,18 @@
             <input type="text" th:value="*{subjectName}" readonly/>
         </div>
 
+        <input type="hidden" th:field="*{subjectDayOfWeek}"/>
+        <div class="form-group">
+            <label>Ден от седмицата</label>
+            <input type="text" th:value="*{subjectDayOfWeek}" readonly/>
+        </div>
+
+        <input type="hidden" th:field="*{subjectStartEndDate}"/>
+        <div class="form-group">
+            <label>Час</label>
+            <input type="text" th:value="*{subjectStartEndDate}" readonly/>
+        </div>
+
         <!-- Отсъствие -->
         <div class="form-group">
             <label for="date">Дата на отсъствие</label>

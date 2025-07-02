@@ -1,6 +1,7 @@
 package com.uni.GradeCenter.service;
 
 import com.uni.GradeCenter.model.Absence;
+import com.uni.GradeCenter.model.Schedule;
 import com.uni.GradeCenter.model.Student;
 import com.uni.GradeCenter.model.Subject;
 import com.uni.GradeCenter.model.dto.bindingDTOs.AbsenceCreateBindingDTO;
@@ -25,4 +26,6 @@ public interface AbsenceService {
     Absence findByStudentAndSubject(Student student, Subject subject);
 
     void createAbsenceFrontend(@Valid AbsenceCreateBindingDTO dto, String name);
+
+    Absence findByStudentSubjectAndScheduleInfo(Student student, Subject subject, Schedule schedule);
 }

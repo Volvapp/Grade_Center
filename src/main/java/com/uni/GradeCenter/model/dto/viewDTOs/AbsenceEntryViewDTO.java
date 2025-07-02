@@ -9,16 +9,20 @@ public class AbsenceEntryViewDTO {
     private String studentFullName;
     private Long studentId;
     private String subjectName;
+    private String subjectDayOfWeek;
+    private String startEndDate;
     private Long subjectId;
     private LocalDate absenceDate;
 
-    public AbsenceEntryViewDTO(String schoolName, String classroomName, Long classroomId, String studentFullName, Long studentId, String subjectName, Long subjectId, LocalDate absenceDate) {
+    public AbsenceEntryViewDTO(String schoolName, String classroomName, Long classroomId, String studentFullName, Long studentId, String subjectName, String subjectDayOfWeek, String startEndDate, Long subjectId, LocalDate absenceDate) {
         this.schoolName = schoolName;
         this.classroomName = classroomName;
         this.classroomId = classroomId;
         this.studentFullName = studentFullName;
         this.studentId = studentId;
         this.subjectName = subjectName;
+        this.subjectDayOfWeek = subjectDayOfWeek;
+        this.startEndDate = startEndDate;
         this.subjectId = subjectId;
         this.absenceDate = absenceDate;
     }
@@ -72,6 +76,22 @@ public class AbsenceEntryViewDTO {
 
     public void setSubjectName(String subjectName) {
         this.subjectName = subjectName;
+    }
+
+    public String getSubjectDayOfWeek() {
+        return subjectDayOfWeek;
+    }
+
+    public void setSubjectDayOfWeek(String subjectDayOfWeek) {
+        this.subjectDayOfWeek = subjectDayOfWeek;
+    }
+
+    public String getStartEndDate() {
+        return startEndDate;
+    }
+
+    public void setStartEndDate(String startEndDate) {
+        this.startEndDate = startEndDate;
     }
 
     public Long getSubjectId() {

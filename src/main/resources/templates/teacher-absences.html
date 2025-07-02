@@ -100,6 +100,8 @@
             <th>Клас</th>
             <th>Ученик</th>
             <th>Предмет</th>
+            <th>Ден от седмицата</th>
+            <th>Час</th>
             <th>Отсъствие</th>
             <th>Действия</th>
         </tr>
@@ -110,6 +112,8 @@
             <td th:text="${entry.classroomName}">Клас</td>
             <td th:text="${entry.studentFullName}">Ученик</td>
             <td th:text="${entry.subjectName}">Предмет</td>
+            <td th:text="${entry.subjectDayOfWeek}">Ден от седмицата</td>
+            <td th:text="${entry.startEndDate}">Час</td>
             <td th:text="${entry.absenceDate}">Отсъствие</td>
             <td>
             <span th:if="${entry.absenceDate != null}" style="color: #c62828; font-weight: bold;">
@@ -121,7 +125,9 @@
                                                 studentId=${entry.studentId},
                                                 studentName=${entry.studentFullName},
                                                 subjectId=${entry.subjectId},
-                                                subjectName=${entry.subjectName})}">
+                                                subjectName=${entry.subjectName},
+                                                subjectDayOfWeek=${entry.subjectDayOfWeek},
+                                                subjectStartEndDate=${entry.startEndDate})}">
                     Въведи отсъствие
                 </a>
             </td>

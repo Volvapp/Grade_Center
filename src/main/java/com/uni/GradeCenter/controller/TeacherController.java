@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -158,7 +159,6 @@ public class TeacherController {
         Teacher teacher = teacherService.findByUsername(principal.getName());
 
         List<AbsenceEntryViewDTO> absenceEntries = new ArrayList<>();
-        Set<String> processed = new HashSet<>();
 
         for (Subject subject : teacher.getQualifiedSubjects()) {
             List<Schedule> schedules = scheduleService.findByTeacherAndSubject(teacher, subject);
@@ -167,13 +167,6 @@ public class TeacherController {
                 Classroom classroom = schedule.getClassroom();
 
                 for (Student student : classroom.getStudents()) {
-                    String uniqueKey = student.getId() + "-" + subject.getId() + "-" + classroom.getId();
-
-                    if (processed.contains(uniqueKey)) {
-                        continue;
-                    }
-                    processed.add(uniqueKey);
-
                     AbsenceEntryViewDTO dto = new AbsenceEntryViewDTO();
                     dto.setSchoolName(classroom.getSchool().getName());
                     dto.setClassroomName(classroom.getName());
@@ -182,8 +175,11 @@ public class TeacherController {
                     dto.setStudentId(student.getId());
                     dto.setSubjectName(subject.getName());
                     dto.setSubjectId(subject.getId());
+                    dto.setSubjectDayOfWeek(schedule.getDayOfWeek().name());
+                    dto.setStartEndDate(schedule.getStartTime() + " - " + schedule.getEndTime());
 
-                    Absence absence = absenceService.findByStudentAndSubject(student, subject);
+                    // Търси отсъствие по ученик, предмет И ДАТА (или ден/час, ако искаш да го направиш по-прецизен)
+                    Absence absence = absenceService.findByStudentSubjectAndScheduleInfo(student, subject, schedule);
 
                     if (absence != null) {
                         dto.setAbsenceDate(absence.getDate());
@@ -208,6 +204,8 @@ public class TeacherController {
                                   @RequestParam String studentName,
                                   @RequestParam Long subjectId,
                                   @RequestParam String subjectName,
+                                  @RequestParam String subjectDayOfWeek,
+                                  @RequestParam String subjectStartEndDate,
                                   Model model) {
         AbsenceCreateBindingDTO dto = new AbsenceCreateBindingDTO();
         dto.setClassroomId(classroomId);
@@ -216,6 +214,8 @@ public class TeacherController {
         dto.setStudentName(studentName);
         dto.setSubjectId(subjectId);
         dto.setSubjectName(subjectName);
+        dto.setSubjectDayOfWeek(subjectDayOfWeek);
+        dto.setSubjectStartEndDate(subjectStartEndDate);
         model.addAttribute("createAbsenceBindingDTO", dto);
 
         return "teacher-absence-create";
@@ -233,7 +233,9 @@ public class TeacherController {
                     + "&studentId=" + dto.getStudentId()
                     + "&studentName=" + dto.getStudentName()
                     + "&subjectId=" + dto.getSubjectId()
-                    + "&subjectName=" + dto.getSubjectName();
+                    + "&subjectName=" + dto.getSubjectName()
+                    + "&subjectDayOfWeek=" + dto.getSubjectDayOfWeek()
+                    + "&subjectStartEndDate=" + dto.getSubjectStartEndDate();
         }
 
         absenceService.createAbsenceFrontend(dto, principal.getName());

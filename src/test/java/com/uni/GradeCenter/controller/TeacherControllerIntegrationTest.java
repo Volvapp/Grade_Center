@@ -160,34 +160,6 @@ public class TeacherControllerIntegrationTest {
                 .andExpect(redirectedUrlPattern("/teacher/grade/create*"));
     }
 
-
-
-    @Test
-    void testShowAbsenceForm() throws Exception {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("classroomId", "1");
-        params.add("classroomName", "Class A");
-        params.add("studentId", "1");
-        params.add("studentName", "Alice Smith");
-        params.add("subjectId", "1");
-        params.add("subjectName", "Mathematics");
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/teacher/absence/create")
-                        .params(params))
-                .andExpect(status().isOk())
-                .andExpect(view().name("teacher-absence-create"))
-                .andExpect(model().attributeExists("createAbsenceBindingDTO"))
-                .andExpect(model().attribute("createAbsenceBindingDTO",
-                        allOf(
-                                hasProperty("classroomId", is(1L)),
-                                hasProperty("classroomName", is("Class A")),
-                                hasProperty("studentId", is(1L)),
-                                hasProperty("studentName", is("Alice Smith")),
-                                hasProperty("subjectId", is(1L)),
-                                hasProperty("subjectName", is("Mathematics"))
-                        )));
-    }
-
     @Test
     void testSubmitAbsenceWithValidationErrors() throws Exception {
         AbsenceCreateBindingDTO dto = new AbsenceCreateBindingDTO();

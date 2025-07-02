@@ -26,18 +26,26 @@ public class AbsenceCreateBindingDTO {
     @NotBlank
     private String subjectName;
 
+    @NotBlank
+    private String subjectDayOfWeek;
+
+    @NotBlank
+    private String subjectStartEndDate;
+
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @PastOrPresent(message = "Датата не може да е в бъдещето")
     private LocalDate date;
 
-    public AbsenceCreateBindingDTO(Long classroomId, Long studentId, Long subjectId, String classroomName, String studentName, String subjectName, LocalDate date) {
+    public AbsenceCreateBindingDTO(Long classroomId, Long studentId, Long subjectId, String classroomName, String studentName, String subjectName, String subjectDayOfWeek, String subjectStartEndDate, LocalDate date) {
         this.classroomId = classroomId;
         this.studentId = studentId;
         this.subjectId = subjectId;
         this.classroomName = classroomName;
         this.studentName = studentName;
         this.subjectName = subjectName;
+        this.subjectDayOfWeek = subjectDayOfWeek;
+        this.subjectStartEndDate = subjectStartEndDate;
         this.date = date;
     }
 
@@ -98,5 +106,21 @@ public class AbsenceCreateBindingDTO {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public String getSubjectDayOfWeek() {
+        return subjectDayOfWeek;
+    }
+
+    public void setSubjectDayOfWeek(String subjectDayOfWeek) {
+        this.subjectDayOfWeek = subjectDayOfWeek;
+    }
+
+    public String getSubjectStartEndDate() {
+        return subjectStartEndDate;
+    }
+
+    public void setSubjectStartEndDate(String subjectStartEndDate) {
+        this.subjectStartEndDate = subjectStartEndDate;
     }
 }

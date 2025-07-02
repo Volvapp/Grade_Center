@@ -1,9 +1,6 @@
 package com.uni.GradeCenter.service.Impl;
 
-import com.uni.GradeCenter.model.Absence;
-import com.uni.GradeCenter.model.Student;
-import com.uni.GradeCenter.model.Subject;
-import com.uni.GradeCenter.model.Teacher;
+import com.uni.GradeCenter.model.*;
 import com.uni.GradeCenter.model.dto.bindingDTOs.AbsenceCreateBindingDTO;
 import com.uni.GradeCenter.repository.AbsenceRepository;
 import com.uni.GradeCenter.repository.StudentRepository;
@@ -14,6 +11,7 @@ import com.uni.GradeCenter.service.SubjectService;
 import com.uni.GradeCenter.service.TeacherService;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -78,7 +76,9 @@ public class AbsenceServiceImpl implements AbsenceService {
                 student,
                 subject,
                 teacher,
-                LocalDate.now().minusDays(1)
+                LocalDate.now().minusDays(1),
+                DayOfWeek.MONDAY,
+                "08:00 - 08:45"
         );
 
         absenceRepository.save(absence);
@@ -96,8 +96,13 @@ public class AbsenceServiceImpl implements AbsenceService {
         Student student = studentService.getStudentById(dto.getStudentId());
         Subject subject = subjectService.getSubjectById(dto.getSubjectId());
 
-        Absence absence = new Absence(student,subject, teacher, dto.getDate());
+        Absence absence = new Absence(student, subject, teacher, dto.getDate(), DayOfWeek.valueOf(dto.getSubjectDayOfWeek()), dto.getSubjectStartEndDate());
 
         absenceRepository.save(absence);
+    }
+
+    @Override
+    public Absence findByStudentSubjectAndScheduleInfo(Student student, Subject subject, Schedule schedule) {
+        return absenceRepository.findByStudentAndSubjectAndDayOfWeekAndStartTimeSubject(student, subject, schedule.getDayOfWeek(), schedule.getStartTime() + " - " + schedule.getEndTime());
     }
 }

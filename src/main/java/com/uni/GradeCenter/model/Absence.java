@@ -1,11 +1,10 @@
 package com.uni.GradeCenter.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "absences")
@@ -21,11 +20,20 @@ public class Absence extends BaseEntity{
     @Column(name = "date")
     private LocalDate date;
 
-    public Absence(Student student, Subject subject, Teacher teacher, LocalDate date) {
+    @Enumerated(EnumType.STRING)
+    @Column(name = "day_of_week")
+    private DayOfWeek dayOfWeek;
+
+    @Column(name = "start_time_subject")
+    private String startTimeSubject;
+
+    public Absence(Student student, Subject subject, Teacher teacher, LocalDate date, DayOfWeek dayOfWeek, String startTimeSubject) {
         this.student = student;
         this.subject = subject;
         this.teacher = teacher;
         this.date = date;
+        this.dayOfWeek = dayOfWeek;
+        this.startTimeSubject = startTimeSubject;
     }
     public Absence() {}
 
@@ -51,6 +59,22 @@ public class Absence extends BaseEntity{
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
+    }
+
+    public DayOfWeek getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(DayOfWeek dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
+    }
+
+    public String getStartTimeSubject() {
+        return startTimeSubject;
+    }
+
+    public void setStartTimeSubject(String startTimeSubject) {
+        this.startTimeSubject = startTimeSubject;
     }
 
     public LocalDate getDate() {

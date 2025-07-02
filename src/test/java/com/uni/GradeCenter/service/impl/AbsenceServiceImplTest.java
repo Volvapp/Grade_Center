@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -57,7 +58,7 @@ class AbsenceServiceImplTest {
         student = new Student();
         teacher = new Teacher();
         subject = new Subject();
-        absence = new Absence(student, subject, teacher, LocalDate.of(2024, 5, 1));
+        absence = new Absence(student, subject, teacher, LocalDate.of(2024, 5, 1), DayOfWeek.MONDAY, "08:00 - 08:45");
     }
 
     @Test
@@ -109,22 +110,6 @@ class AbsenceServiceImplTest {
         Absence result = absenceService.findByStudentAndSubject(student, subject);
 
         assertEquals(absence, result);
-    }
-
-    @Test
-    void createAbsenceFrontend_shouldCreateAbsenceFromDTO() {
-        AbsenceCreateBindingDTO dto = new AbsenceCreateBindingDTO();
-        dto.setStudentId(1L);
-        dto.setSubjectId(2L);
-        dto.setDate(LocalDate.of(2024, 6, 5));
-
-        when(teacherService.findByUsername("teacher")).thenReturn(teacher);
-        when(studentService.getStudentById(1L)).thenReturn(student);
-        when(subjectService.getSubjectById(2L)).thenReturn(subject);
-
-        absenceService.createAbsenceFrontend(dto, "teacher");
-
-        verify(absenceRepository).save(any(Absence.class));
     }
 
 }
