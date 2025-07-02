@@ -151,6 +151,8 @@
             <thead>
             <tr>
                 <th>Предмет</th>
+                <th>Дет от седмицата</th>
+                <th>Час</th>
                 <th>Преподавател</th>
                 <th>Дата</th>
             </tr>
@@ -158,6 +160,8 @@
             <tbody>
             <tr th:each="absence : ${student.absences}">
                 <td th:text="${absence.subject.name}" data-label="Предмет"></td>
+                <td th:text="${absence.dayOfWeek}" data-label="Ден от седмицата"></td>
+                <td th:text="${absence.startTimeSubject}" data-label="Час"></td>
                 <td th:text="${absence.teacher.user.firstName + ' ' + absence.teacher.user.lastName}" data-label="Преподавател"></td>
                 <td th:text="${absence.date}" data-label="Дата"></td>
             </tr>
