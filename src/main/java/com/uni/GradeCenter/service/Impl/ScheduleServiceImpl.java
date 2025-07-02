@@ -89,6 +89,10 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.setSubject(subject);
 
         scheduleRepository.save(schedule);
+
+        classroom.getSchedules().add(schedule);
+
+        classroomService.updateClassroom(classroom);
     }
 
     @Override

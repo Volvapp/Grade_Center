@@ -20,7 +20,7 @@ public class Classroom extends BaseEntity {
     @OneToMany(mappedBy = "classroom")
     private List<Student> students;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Schedule> schedules;
 
     public Classroom(String name, Integer grade, School school) {
