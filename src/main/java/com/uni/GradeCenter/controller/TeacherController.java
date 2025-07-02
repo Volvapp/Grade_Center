@@ -158,12 +158,22 @@ public class TeacherController {
         Teacher teacher = teacherService.findByUsername(principal.getName());
 
         List<AbsenceEntryViewDTO> absenceEntries = new ArrayList<>();
+        Set<String> processed = new HashSet<>();
 
         for (Subject subject : teacher.getQualifiedSubjects()) {
             List<Schedule> schedules = scheduleService.findByTeacherAndSubject(teacher, subject);
+
             for (Schedule schedule : schedules) {
                 Classroom classroom = schedule.getClassroom();
+
                 for (Student student : classroom.getStudents()) {
+                    String uniqueKey = student.getId() + "-" + subject.getId() + "-" + classroom.getId();
+
+                    if (processed.contains(uniqueKey)) {
+                        continue;
+                    }
+                    processed.add(uniqueKey);
+
                     AbsenceEntryViewDTO dto = new AbsenceEntryViewDTO();
                     dto.setSchoolName(classroom.getSchool().getName());
                     dto.setClassroomName(classroom.getName());
