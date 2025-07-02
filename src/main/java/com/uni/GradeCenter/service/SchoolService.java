@@ -4,10 +4,7 @@ import com.uni.GradeCenter.model.School;
 import com.uni.GradeCenter.model.dto.SchoolDTO;
 import com.uni.GradeCenter.model.dto.viewDTOs.SubjectViewDTO;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public interface SchoolService {
     School createSchool(School school);
@@ -33,4 +30,6 @@ public interface SchoolService {
     Optional<School> findBySchoolName(String firstLanguageSchool);
 
     Map<Long, List<SubjectViewDTO>> getSchoolStatistics();
+
+    Set<Long> getAssignedDirectorsIds();
 }

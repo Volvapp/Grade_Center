@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -20,14 +21,16 @@ public class UserServiceImpl implements UserService {
     private final StudentService studentService;
     private final ParentService parentService;
     private final AbsenceService absenceService;
+    private final SchoolService schoolService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, TeacherService teacherService, StudentService studentService, ParentService parentService, AbsenceService absenceService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, TeacherService teacherService, StudentService studentService, ParentService parentService, AbsenceService absenceService, SchoolService schoolService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.teacherService = teacherService;
         this.studentService = studentService;
         this.parentService = parentService;
         this.absenceService = absenceService;
+        this.schoolService = schoolService;
     }
 
     @Override
@@ -207,5 +210,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username);
+    }
+
+    @Override
+    public List<User> getUnassignedDirectors() {
+       return this.getUsersByRole(Role.DIRECTOR).stream()
+                .filter(director -> !schoolService.getAssignedDirectorsIds().contains(director.getId()))
+                .collect(Collectors.toList());
     }
 }

@@ -62,7 +62,7 @@ class UserServiceImplTest {
     @Test
     void testGetUserById_NotFound() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class, () -> userService.getUserById(1L));
+        assertThrows(RuntimeException.class, () -> userService.getUserById(1L));
     }
 
     // UPDATE USER

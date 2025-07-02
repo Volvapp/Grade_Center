@@ -304,12 +304,23 @@
                 <td data-label="Директор">
                     <select name="directorId">
                         <option value="">-- Без директор --</option>
-                        <option th:each="dir : ${directors}"
+
+                        <!-- Свободни директори -->
+                        <option th:each="dir : ${unassignedDirectors}"
                                 th:value="${dir.id}"
                                 th:text="${dir.firstName + ' ' + dir.lastName}"
                                 th:selected="${dir.id == school.directorId}">
                         </option>
+
+                        <!-- Текущ директор, ако вече е асоцииран и не е сред свободните -->
+                        <option th:each="dir : ${allDirectors}"
+                                th:if="${school.directorId != null and dir.id == school.directorId and !#lists.contains(unassignedDirectors, dir)}"
+                                th:value="${dir.id}"
+                                th:text="${dir.firstName + ' ' + dir.lastName}"
+                                th:selected="true">
+                        </option>
                     </select>
+
 
                 </td>
                 <td data-label="Учители">

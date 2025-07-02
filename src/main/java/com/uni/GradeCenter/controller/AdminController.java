@@ -3,6 +3,7 @@ package com.uni.GradeCenter.controller;
 import com.uni.GradeCenter.model.*;
 import com.uni.GradeCenter.model.dto.AvailableSlotDTO;
 import com.uni.GradeCenter.model.dto.ClassroomDTO;
+import com.uni.GradeCenter.model.dto.SchoolDTO;
 import com.uni.GradeCenter.model.dto.UserDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateScheduleBindingDTO;
 import com.uni.GradeCenter.model.dto.bindingDTOs.CreateSchoolBindingDTO;
@@ -35,9 +36,10 @@ public class AdminController {
     private final TeacherService teacherService;
     private final ScheduleService scheduleService;
     private final SubjectService subjectService;
-    private final ModelMapper modelMapper;
 
-    public AdminController(UserService userService, SchoolService schoolService, StudentService studentService, ParentService parentService, ClassroomService classroomService, TeacherService teacherService, ScheduleService scheduleService, SubjectService subjectService, ModelMapper modelMapper) {
+    public AdminController(UserService userService, SchoolService schoolService, StudentService studentService,
+                           ParentService parentService, ClassroomService classroomService, TeacherService teacherService,
+                           ScheduleService scheduleService, SubjectService subjectService) {
         this.userService = userService;
         this.schoolService = schoolService;
         this.studentService = studentService;
@@ -46,7 +48,6 @@ public class AdminController {
         this.teacherService = teacherService;
         this.scheduleService = scheduleService;
         this.subjectService = subjectService;
-        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/users")
@@ -71,10 +72,27 @@ public class AdminController {
 
     @GetMapping("/schools")
     public String schools(Model model) {
-        model.addAttribute("schools", schoolService.getAllSchoolDTOs());
-        model.addAttribute("directors", userService.getUsersByRole(Role.DIRECTOR));
+        List<SchoolDTO> schools = schoolService.getAllSchoolDTOs();
+        List<User> allDirectors = userService.getUsersByRole(Role.DIRECTOR);
+
+
+        Set<Long> assignedDirectorIds = schools.stream()
+                .map(SchoolDTO::getDirectorId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+
+        List<User> unassignedDirectors = allDirectors.stream()
+                .filter(director -> !assignedDirectorIds.contains(director.getId()))
+                .collect(Collectors.toList());
+
+        model.addAttribute("schools", schools);
+        model.addAttribute("allDirectors", allDirectors);
+        model.addAttribute("unassignedDirectors", unassignedDirectors);
+
         return "admin-schools";
     }
+
 
 
     @PostMapping("/schools/edit/{id}")
@@ -109,14 +127,7 @@ public class AdminController {
         if (!model.containsAttribute("createSchoolBindingDTO")) {
             model.addAttribute("createSchoolBindingDTO", new CreateSchoolBindingDTO());
         }
-        List<User> allDirectors = userService.getUsersByRole(Role.DIRECTOR);
-        Set<Long> assignedDirectorIds = schoolService.getAllSchools().stream()
-                .map(school -> school.getDirector().getId())
-                .collect(Collectors.toSet());
-
-        List<User> unassignedDirectors = allDirectors.stream()
-                .filter(director -> !assignedDirectorIds.contains(director.getId()))
-                .collect(Collectors.toList());
+        List<User> unassignedDirectors = userService.getUnassignedDirectors();
 
         model.addAttribute("directors", unassignedDirectors);
 

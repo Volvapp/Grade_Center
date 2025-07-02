@@ -88,8 +88,6 @@ public class AppInitializer implements CommandLineRunner {
             teacherService.initializeTeachers();
         }
 
-        // TODO finish students, schedules, grades, adbsences
-
         if (studentRepository.count() == 0) {
             studentService.initializeStudents();
         }

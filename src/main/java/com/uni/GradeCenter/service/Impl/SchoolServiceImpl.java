@@ -160,6 +160,15 @@ public class SchoolServiceImpl implements SchoolService {
         return schoolStats;
     }
 
+    @Override
+    public Set<Long> getAssignedDirectorsIds() {
+        return this.getAllSchools().stream()
+                .map(School::getDirector)
+                .filter(Objects::nonNull)
+                .map(User::getId)
+                .collect(Collectors.toSet());
+    }
+
     private SchoolDTO convertToDTO(School school) {
         SchoolDTO dto = modelMapper.map(school, SchoolDTO.class);
 
@@ -188,4 +197,5 @@ public class SchoolServiceImpl implements SchoolService {
 
         return dto;
     }
+
 }
