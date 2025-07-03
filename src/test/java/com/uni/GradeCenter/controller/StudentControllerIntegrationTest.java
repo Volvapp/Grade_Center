@@ -87,25 +87,21 @@ class StudentControllerIntegrationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(studentController).build();
 
-        // Setup test user
         testUser = new User();
         testUser.setId(1L);
         testUser.setUsername("student1");
         testUser.setFirstName("John");
         testUser.setLastName("Doe");
 
-        // Setup test classroom
         testClassroom = new Classroom();
         testClassroom.setId(1L);
         testClassroom.setName("Class 10A");
 
-        // Setup test student
         testStudent = new Student();
         testStudent.setId(1L);
         testStudent.setUser(testUser);
         testStudent.setClassroom(testClassroom);
 
-        // Setup test schedule
         testSchedule = new Schedule();
         testSchedule.setId(1L);
         Subject subject = new Subject();
@@ -120,7 +116,6 @@ class StudentControllerIntegrationTest {
 
         testClassroom.setSchedules(Collections.singletonList(testSchedule));
 
-        // Setup security context with mock principal
         Authentication authentication = new UsernamePasswordAuthenticationToken("student1", "password");
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(authentication);
@@ -133,7 +128,7 @@ class StudentControllerIntegrationTest {
         when(studentService.getStudentByUserId(1L)).thenReturn(testStudent);
 
         mockMvc.perform(get("/student/statistics")
-                        .principal(() -> "student1")) // Add mock principal to request
+                        .principal(() -> "student1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("student-statistics"))
                 .andExpect(model().attributeExists("student"))
@@ -158,7 +153,7 @@ class StudentControllerIntegrationTest {
         when(scheduleService.mapToView(anyList())).thenReturn(Collections.singletonList(new ScheduleViewDTO()));
 
         mockMvc.perform(get("/student/schedule")
-                        .principal(() -> "student1")) // Add mock principal to request
+                        .principal(() -> "student1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("student-schedule"))
                 .andExpect(model().attributeExists("schedules"))

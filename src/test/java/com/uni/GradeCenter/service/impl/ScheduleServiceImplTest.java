@@ -188,7 +188,7 @@ class ScheduleServiceImplTest {
         when(classroomService.getClassroomById(1L)).thenReturn(classroom);
         when(subjectService.getSubjectById(1L)).thenReturn(subject);
         when(teacherRepository.findBySchoolAndQualifiedSubjectsContaining(any(), eq(subject)))
-                .thenReturn(List.of(teacher)); // John Doe
+                .thenReturn(List.of(teacher));
 
         assertThrows(RuntimeException.class, () -> scheduleService.createScheduleFrontend(dto));
     }

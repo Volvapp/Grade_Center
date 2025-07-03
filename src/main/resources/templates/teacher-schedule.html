@@ -103,7 +103,6 @@
 
 <h1>Твоята програма</h1>
 
-<!-- Секция за всеки ден от седмицата -->
 <div class="day-section" th:each="day : ${T(java.util.List).of('MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY')}">
     <h2 th:text="${#strings.capitalize(day.toLowerCase())}">Ден</h2>
 

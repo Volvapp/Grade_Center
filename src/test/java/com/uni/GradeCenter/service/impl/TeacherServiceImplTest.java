@@ -128,7 +128,6 @@ class TeacherServiceImplTest {
     void testInitializeTeachers_Success() {
         when(teacherRepository.count()).thenReturn(0L);
 
-        // Mock users
         List<String> usernames = List.of("teacher", "teacher1_2", "teacher2", "teacher3", "teacher4");
         for (String name : usernames) {
             User user = new User();
@@ -136,13 +135,11 @@ class TeacherServiceImplTest {
             when(userService.findByRoleAndUsername(Role.TEACHER, name)).thenReturn(Optional.of(user));
         }
 
-        // Mock schools
         List<String> schoolNames = List.of("First Language School", "Second Language School", "Third Language School", "Fourth Language School");
         for (String name : schoolNames) {
             when(schoolService.findBySchoolName(name)).thenReturn(Optional.of(new School()));
         }
 
-        // Mock subjects
         List<Subject> allSubjects = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
             Subject subject = new Subject();
@@ -154,7 +151,6 @@ class TeacherServiceImplTest {
 
         teacherService.initializeTeachers();
 
-        // Capture what was saved
         ArgumentCaptor<List<Teacher>> captor = ArgumentCaptor.forClass(List.class);
         verify(teacherRepository).saveAll(captor.capture());
 
@@ -185,7 +181,6 @@ class TeacherServiceImplTest {
             when(schoolService.findBySchoolName(name)).thenReturn(Optional.of(new School()));
         }
 
-        // Only 10 subjects — should fail
         List<Subject> subjects = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             subjects.add(new Subject("Sub" + i, null));

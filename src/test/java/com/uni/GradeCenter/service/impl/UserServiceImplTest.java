@@ -33,7 +33,6 @@ class UserServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // CREATE USER
     @Test
     void testCreateUser() {
         User user = new User();
@@ -48,7 +47,6 @@ class UserServiceImplTest {
         verify(userRepository).save(user);
     }
 
-    // GET USER BY ID
     @Test
     void testGetUserById_Found() {
         User user = new User();
@@ -65,7 +63,6 @@ class UserServiceImplTest {
         assertThrows(RuntimeException.class, () -> userService.getUserById(1L));
     }
 
-    // UPDATE USER
     @Test
     void testUpdateUser() {
         User user = new User();
@@ -76,7 +73,6 @@ class UserServiceImplTest {
         assertEquals(user, result);
     }
 
-    // FIND BY ROLE
     @Test
     void testFindByRole() {
         User user = new User();
@@ -88,14 +84,12 @@ class UserServiceImplTest {
         assertEquals(user, result.get());
     }
 
-    // DELETE USER
     @Test
     void testDeleteUserById() {
         userService.deleteUserById(3L);
         verify(userRepository).deleteById(3L);
     }
 
-    // GET ALL USERS
     @Test
     void testGetAllUsers() {
         List<User> users = List.of(new User(), new User());
@@ -106,7 +100,6 @@ class UserServiceImplTest {
         assertEquals(2, result.size());
     }
 
-    // USERNAME OR EMAIL EXISTS
     @Test
     void testUsernameOrEmailExists_True() {
         when(userRepository.findByUsername("u")).thenReturn(new User());
@@ -127,7 +120,6 @@ class UserServiceImplTest {
         assertFalse(result);
     }
 
-    // INITIALIZE USERS
     @Test
     void testInitializeUsers_SkippedIfAlreadyInitialized() {
         when(userRepository.count()).thenReturn(10L);
@@ -153,7 +145,6 @@ class UserServiceImplTest {
         }));
     }
 
-    // UPDATE USER FROM DTO
     @Test
     void testUpdateUserFromDTO_ChangeRoleToStudent() {
         Long userId = 1L;
@@ -235,7 +226,6 @@ class UserServiceImplTest {
         verify(userRepository).save(user);
     }
 
-    // FIND USERS BY ROLE
     @Test
     void testGetUsersByRole() {
         List<User> users = List.of(new User(), new User());
@@ -246,7 +236,6 @@ class UserServiceImplTest {
         assertEquals(2, result.size());
     }
 
-    // FIND BY ROLE AND USERNAME
     @Test
     void testFindByRoleAndUsername() {
         Optional<User> user = Optional.of(new User());
@@ -257,7 +246,6 @@ class UserServiceImplTest {
         assertTrue(result.isPresent());
     }
 
-    // FIND BY USERNAME
     @Test
     void testFindByUsername() {
         User user = new User();

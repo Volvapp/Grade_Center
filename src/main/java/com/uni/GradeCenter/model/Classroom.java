@@ -9,7 +9,7 @@ import java.util.List;
 @Table(name = "classrooms")
 public class Classroom extends BaseEntity {
     @Column(name = "name", unique = true, nullable = false)
-    private String name; // Името на самата паралелка (6A)
+    private String name;
 
     @Column(name = "grade", nullable = false)
     private Integer grade;

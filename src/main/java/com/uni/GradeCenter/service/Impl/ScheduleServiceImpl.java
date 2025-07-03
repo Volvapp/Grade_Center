@@ -107,7 +107,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         for (int i = 1; i <= 7; i++) {
             startTimes.add(current);
-            // Почивка след 3-ти час
             if (i == 3) {
                 current = current.plusMinutes(40 + 30); // 40 мин. час + 30 мин. почивка
             } else {

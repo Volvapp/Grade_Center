@@ -78,7 +78,7 @@ public class TeacherServiceImpl implements TeacherService {
         School school4 = schoolService.findBySchoolName("Fourth Language School")
                 .orElseThrow(() -> new IllegalStateException("School 4 not found."));
 
-        List<Subject> allSubjects = subjectService.findAll(); // или subjectRepository.findAll()
+        List<Subject> allSubjects = subjectService.findAll();
         if (allSubjects.size() < 16) {
             throw new IllegalStateException("Not enough subjects to assign uniquely to each teacher.");
         }

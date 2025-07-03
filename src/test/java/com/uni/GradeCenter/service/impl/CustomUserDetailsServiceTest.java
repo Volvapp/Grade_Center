@@ -27,7 +27,6 @@ class CustomUserDetailsServiceTest {
 
     @Test
     void testLoadUserByUsername_userExistsWithRole() {
-        // Arrange
         User user = new User();
         user.setUsername("testuser");
         user.setPassword("encoded-password");
@@ -35,10 +34,8 @@ class CustomUserDetailsServiceTest {
 
         when(userRepository.findByUsername("testuser")).thenReturn(user);
 
-        // Act
         UserDetails userDetails = customUserDetailsService.loadUserByUsername("testuser");
 
-        // Assert
         assertNotNull(userDetails);
         assertEquals("testuser", userDetails.getUsername());
         assertEquals("encoded-password", userDetails.getPassword());
@@ -59,7 +56,7 @@ class CustomUserDetailsServiceTest {
         User user = new User();
         user.setUsername("pendinguser");
         user.setPassword("password");
-        user.setRole(null); // Pending approval
+        user.setRole(null);
 
         when(userRepository.findByUsername("pendinguser")).thenReturn(user);
 

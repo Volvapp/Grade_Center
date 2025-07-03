@@ -46,7 +46,6 @@ public class TeacherController {
         Teacher teacher = teacherService.findByUsername(principal.getName());
         List<GradeEntryViewDTO> gradeEntries = new ArrayList<>();
 
-        // Използваме Set, за да пазим уникални комбинации "studentId:subjectId"
         Set<String> seenStudentSubjectPairs = new HashSet<>();
 
         for (Subject subject : teacher.getQualifiedSubjects()) {
@@ -56,7 +55,7 @@ public class TeacherController {
                 for (Student student : classroom.getStudents()) {
                     String uniqueKey = student.getId() + ":" + subject.getId();
                     if (seenStudentSubjectPairs.contains(uniqueKey)) {
-                        continue; // вече сме добавили тази комбинация
+                        continue;
                     }
                     seenStudentSubjectPairs.add(uniqueKey);
 
@@ -178,7 +177,6 @@ public class TeacherController {
                     dto.setSubjectDayOfWeek(schedule.getDayOfWeek().name());
                     dto.setStartEndDate(schedule.getStartTime() + " - " + schedule.getEndTime());
 
-                    // Търси отсъствие по ученик, предмет И ДАТА (или ден/час, ако искаш да го направиш по-прецизен)
                     Absence absence = absenceService.findByStudentSubjectAndScheduleInfo(student, subject, schedule);
 
                     if (absence != null) {

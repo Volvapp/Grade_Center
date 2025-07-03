@@ -62,7 +62,6 @@ class DirectorControllerIntegrationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(directorController).build();
 
-        // Setup test data
         testUser = new User();
         testUser.setId(1L);
         testUser.setUsername("director1");
@@ -103,7 +102,6 @@ class DirectorControllerIntegrationTest {
         testClassroom.setId(1L);
         testClassroom.setName("Class 10A");
 
-        // Setup relationships
         testSchool.setTeachers(List.of(testTeacher));
         testSchool.setStudents(List.of(testStudent));
         testSchool.setSubjects(List.of(testSubject));
@@ -112,7 +110,6 @@ class DirectorControllerIntegrationTest {
 
     @Test
     void testSchoolInformationEndpoint() throws Exception {
-        // Mock service responses
         when(userService.findByUsername("director1")).thenReturn(testUser);
         when(schoolService.findByUserId(1L)).thenReturn(testSchool);
         when(gradeService.countGradesPerSubjectForSchool(1L)).thenReturn(Map.of("Mathematics", 10L));
@@ -120,7 +117,7 @@ class DirectorControllerIntegrationTest {
         when(gradeService.calculateOverallAverageForSchool(1L)).thenReturn(4.5);
 
         mockMvc.perform(get("/director/school")
-                        .principal(() -> "director1")) // Mock principal
+                        .principal(() -> "director1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("director-school"))
                 .andExpect(model().attributeExists("user"))
@@ -134,7 +131,6 @@ class DirectorControllerIntegrationTest {
                 .andExpect(model().attributeExists("averagePerTeacher"))
                 .andExpect(model().attributeExists("overallAverage"))
 
-                // Verify specific model attributes
                 .andExpect(model().attribute("user", hasProperty("username", is("director1"))))
                 .andExpect(model().attribute("school", hasProperty("name", is("Test School"))))
                 .andExpect(model().attribute("teachers", hasSize(1)))
@@ -146,7 +142,6 @@ class DirectorControllerIntegrationTest {
                 .andExpect(model().attribute("averagePerTeacher", hasEntry("Jane Smith", 4.5)))
                 .andExpect(model().attribute("overallAverage", is(4.5)));
 
-        // Verify service interactions
         verify(userService).findByUsername("director1");
         verify(schoolService).findByUserId(1L);
         verify(gradeService).countGradesPerSubjectForSchool(1L);
@@ -156,11 +151,9 @@ class DirectorControllerIntegrationTest {
 
     @Test
     void testSchoolInformationEndpointWithNullParent() throws Exception {
-        // Setup student without parent
         testStudent.setParent(null);
         testSchool.setStudents(List.of(testStudent));
 
-        // Mock service responses
         when(userService.findByUsername("director1")).thenReturn(testUser);
         when(schoolService.findByUserId(1L)).thenReturn(testSchool);
         when(gradeService.countGradesPerSubjectForSchool(1L)).thenReturn(Map.of());

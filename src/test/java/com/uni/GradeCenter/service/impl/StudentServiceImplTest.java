@@ -134,7 +134,7 @@ class StudentServiceImplTest {
 
         studentService.initializeStudents();
 
-        verify(studentRepository, times(8)).save(any(Student.class)); // 4 saves initially + 4 after setting parent
+        verify(studentRepository, times(8)).save(any(Student.class));
         verify(parentService, times(4)).createParent(any(Parent.class));
     }
 
@@ -168,7 +168,6 @@ class StudentServiceImplTest {
         Long schoolId = 10L;
         Long newClassroomId = 100L;
 
-        // Mock entities
         User user = new User();
         Student student = new Student();
         student.setUser(user);

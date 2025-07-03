@@ -47,7 +47,6 @@ class AbsenceServiceImplTest {
     @InjectMocks
     private AbsenceServiceImpl absenceService;
 
-    // Примерни обекти
     private Student student;
     private Teacher teacher;
     private Subject subject;

@@ -152,7 +152,7 @@
         <input type="email" name="email" th:value="${parent.user.email}" required placeholder="email@example.com" />
 
         <select name="childId">
-            <option value="">Без дете</option> <!-- опция за отписване -->
+            <option value="">Без дете</option>
 
             <option th:if="${parent.child != null}"
                     th:value="${parent.child.id}"

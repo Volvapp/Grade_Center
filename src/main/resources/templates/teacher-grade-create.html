@@ -133,12 +133,10 @@
 
     <form th:action="@{/teacher/grade/create}" th:object="${createGradeBindingDTO}" method="post">
 
-        <!-- Hidden ID полета -->
         <input type="hidden" th:field="*{classroomId}"/>
         <input type="hidden" th:field="*{studentId}"/>
         <input type="hidden" th:field="*{subjectId}"/>
 
-        <!-- Имена: визуални + скрити, за да се пратят в DTO -->
         <input type="hidden" th:field="*{classroomName}"/>
         <div class="form-group">
             <label>Клас</label>
@@ -157,7 +155,6 @@
             <input type="text" th:value="*{subjectName}" readonly/>
         </div>
 
-        <!-- Оценка -->
         <div class="form-group">
             <label for="grade">Оценка</label>
             <input type="text" id="grade" th:field="*{grade}" placeholder="Въведи оценка (напр. 5.50)"/>

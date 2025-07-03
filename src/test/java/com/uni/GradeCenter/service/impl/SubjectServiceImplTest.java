@@ -130,7 +130,6 @@ class SubjectServiceImplTest {
 
         subjectService.initializeSubjects();
 
-        // 4 schools * 4 subjects each = 16 subjects
         verify(subjectRepository).saveAll(argThat(subjects -> {
             List<Subject> subjectList = new ArrayList<>();
             subjects.forEach(subjectList::add);

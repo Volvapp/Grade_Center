@@ -152,12 +152,10 @@
 
     <form th:action="@{/teacher/absence/create}" th:object="${createAbsenceBindingDTO}" method="post">
 
-        <!-- Hidden ID полета -->
         <input type="hidden" th:field="*{classroomId}"/>
         <input type="hidden" th:field="*{studentId}"/>
         <input type="hidden" th:field="*{subjectId}"/>
 
-        <!-- Имена: визуални + скрити, за да се пратят в DTO -->
         <input type="hidden" th:field="*{classroomName}"/>
         <div class="form-group">
             <label>Клас</label>
@@ -188,7 +186,6 @@
             <input type="text" th:value="*{subjectStartEndDate}" readonly/>
         </div>
 
-        <!-- Отсъствие -->
         <div class="form-group">
             <label for="date">Дата на отсъствие</label>
             <input type="date" id="date" th:field="*{date}" placeholder="Избери дата"/>

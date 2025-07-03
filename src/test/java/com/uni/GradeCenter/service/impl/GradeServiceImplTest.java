@@ -126,18 +126,18 @@ class GradeServiceImplTest {
         grade.setId(1L);
 
         Teacher teacher = new Teacher();
-        teacher.setId(10L); // 👈 добави ID
+        teacher.setId(10L);
         teacher.setGrades(new ArrayList<>(List.of(grade)));
         grade.setTeacher(teacher);
 
         Student student = new Student();
-        student.setId(20L); // 👈 добави ID
+        student.setId(20L);
         student.setGrades(new ArrayList<>(List.of(grade)));
         grade.setStudent(student);
 
         when(gradeRepository.findById(1L)).thenReturn(Optional.of(grade));
-        when(teacherService.getTeacherById(10L)).thenReturn(teacher); // 👈 съвпада с ID
-        when(studentService.getStudentById(20L)).thenReturn(student); // 👈 съвпада с ID
+        when(teacherService.getTeacherById(10L)).thenReturn(teacher);
+        when(studentService.getStudentById(20L)).thenReturn(student);
 
         gradeService.deleteGrade(1L);
 

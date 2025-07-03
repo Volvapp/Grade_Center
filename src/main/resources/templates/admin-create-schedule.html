@@ -135,7 +135,6 @@
     <form th:action="@{/admin/schedules/create}" th:object="${createScheduleBindingDTO}" method="post">
         <input type="hidden" id="classroomId" th:field="*{classroomId}" th:value="${classroom.id}" />
 
-        <!-- Ден от седмицата -->
         <div class="form-group">
             <label for="dayOfWeek">Ден от седмицата</label>
             <select id="dayOfWeek" name="dayOfWeek" onchange="loadAvailableTimes()" th:field="*{dayOfWeek}" required>
@@ -149,7 +148,6 @@
             <small th:if="${#fields.hasErrors('dayOfWeek')}" th:errors="*{dayOfWeek}" class="field-error"></small>
         </div>
 
-        <!-- Предмет -->
         <div class="form-group">
             <label for="subjectId">Предмет</label>
             <select id="subjectId" name="subjectId" onchange="loadAvailableTimes()" th:field="*{subjectId}" required>
@@ -161,20 +159,16 @@
             <small th:if="${#fields.hasErrors('subjectId')}" th:errors="*{subjectId}" class="field-error"></small>
         </div>
 
-        <!-- Час от деня (всички възможни комбинации час + учител) -->
         <div class="form-group">
             <label for="startTime">Начален час</label>
             <select id="startTime" name="startTime" th:field="*{startTime}" required onchange="updateSelectedTeacher()">
                 <option value="">-- Избери час --</option>
-                <!-- опции ще се зареждат динамично -->
             </select>
             <small th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}" class="field-error"></small>
         </div>
 
-        <!-- Скрит input, който се изпраща с формата -->
         <input type="hidden" id="teacherNameHidden" name="teacherName" th:field="*{teacherName}" />
 
-        <!-- Показване на учителя (readonly) -->
         <div class="form-group">
             <label>Учител</label>
             <input type="text" id="teacherName" disabled />

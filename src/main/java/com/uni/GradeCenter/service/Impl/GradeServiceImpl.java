@@ -9,6 +9,8 @@ import com.uni.GradeCenter.repository.TeacherRepository;
 import com.uni.GradeCenter.service.*;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -98,23 +100,34 @@ public class GradeServiceImpl implements GradeService {
                 .collect(Collectors.groupingBy(g -> g.getSubject().getName(), Collectors.counting()));
     }
 
+    private double roundToTwoDecimals(double value) {
+        return BigDecimal.valueOf(value)
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
+    }
+
     @Override
     public Map<String, Double> averageGradesPerTeacherForSchool(Long schoolId) {
         return gradeRepository.findAll().stream()
                 .filter(g -> g.getStudent().getSchool().getId().equals(schoolId))
                 .collect(Collectors.groupingBy(
                         g -> g.getTeacher().getUser().getFirstName() + " " + g.getTeacher().getUser().getLastName(),
-                        Collectors.averagingDouble(Grade::getValue)
+                        Collectors.collectingAndThen(
+                                Collectors.averagingDouble(Grade::getValue),
+                                this::roundToTwoDecimals
+                        )
                 ));
     }
 
     @Override
     public Double calculateOverallAverageForSchool(Long schoolId) {
-        return gradeRepository.findAll().stream()
-                .filter(g -> g.getStudent().getSchool().getId().equals(schoolId))
-                .mapToDouble(Grade::getValue)
-                .average()
-                .orElse(0.0);
+        return roundToTwoDecimals(
+                gradeRepository.findAll().stream()
+                        .filter(g -> g.getStudent().getSchool().getId().equals(schoolId))
+                        .mapToDouble(Grade::getValue)
+                        .average()
+                        .orElse(0.0)
+        );
     }
 
 

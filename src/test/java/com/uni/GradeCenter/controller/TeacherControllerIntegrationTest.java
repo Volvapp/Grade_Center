@@ -151,7 +151,6 @@ public class TeacherControllerIntegrationTest {
     @Test
     void testSubmitGradeWithValidationErrors() throws Exception {
         CreateGradeBindingDTO dto = new CreateGradeBindingDTO();
-        // Missing required fields to trigger validation errors
 
         mockMvc.perform(MockMvcRequestBuilders.post("/teacher/grade/create")
                         .flashAttr("createGradeBindingDTO", dto)
@@ -163,7 +162,6 @@ public class TeacherControllerIntegrationTest {
     @Test
     void testSubmitAbsenceWithValidationErrors() throws Exception {
         AbsenceCreateBindingDTO dto = new AbsenceCreateBindingDTO();
-        // Missing required fields to trigger validation errors
 
         mockMvc.perform(MockMvcRequestBuilders.post("/teacher/absence/create")
                         .flashAttr("createAbsenceBindingDTO", dto)
